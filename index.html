@@ -18,6 +18,7 @@ button,input,select{font-family:inherit}
 .card{width:min(100%,560px);border:1px solid var(--line);border-radius:24px;padding:14px;background:linear-gradient(165deg,rgba(255,255,255,.14),rgba(255,255,255,.05));backdrop-filter:blur(18px);box-shadow:0 22px 70px rgba(0,0,0,.55)}
 h1{margin:0 0 6px;text-align:center;font-size:clamp(34px,9vw,52px);font-weight:900;line-height:1.05;background:linear-gradient(120deg,#fff,var(--pink),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 .lead{margin:0 0 10px;text-align:center;color:var(--muted);font-size:12.5px;line-height:1.45}
+.last-win{display:none;margin:0 0 9px;text-align:center;padding:7px 10px;border:1px solid rgba(255,209,102,.4);border-radius:13px;background:rgba(255,209,102,.1);color:#ffd166;font-size:12px;font-weight:900}
 .g2{display:grid;grid-template-columns:1fr 1fr;gap:7px}
 label{display:block;color:var(--muted);font-size:11px;font-weight:700;margin:6px 0 3px}
 input,select{width:100%;padding:9px;border-radius:11px;border:1px solid var(--line);background:rgba(255,255,255,.08);color:#fff}
@@ -63,6 +64,7 @@ input,select{width:100%;padding:9px;border-radius:11px;border:1px solid var(--li
 .cell.seen.question{background:linear-gradient(145deg,#492777,#1f1133)}
 .cell.seen.temptation{background:linear-gradient(145deg,#035a5e,#032a2d)}
 .cell.seen.duel{background:linear-gradient(145deg,#672a5d,#2f112b)}
+.cell.seen.drink{background:linear-gradient(145deg,#5a1530,#250916)}
 .cell.seen.empty{background:linear-gradient(145deg,#2f2b3d,#181420)}
 .icon{font-size:23px;z-index:1}
 .badge{position:absolute;z-index:2;font-size:8px;padding:2px 4px;border-radius:7px;font-weight:900}
@@ -98,13 +100,11 @@ input,select{width:100%;padding:9px;border-radius:11px;border:1px solid var(--li
 .timer-btn{border:1px solid rgba(255,209,102,.45);border-radius:999px;padding:9px 12px;background:rgba(255,209,102,.12);color:#ffd166;font-weight:900}
 .timer-display{font-size:28px;font-weight:900;color:#ffd166;text-shadow:0 0 14px rgba(255,209,102,.35)}
 
-.duel-count{font-size:40px;font-weight:900;color:#ffd166;text-shadow:0 0 16px rgba(255,209,102,.55)}
-.duel-row{display:grid;gap:8px;margin-top:10px}
-.duel-line{display:grid;grid-template-columns:82px 1fr 34px;gap:6px;align-items:center}
-.duel-name{font-size:12px;font-weight:800;color:#ffd9e9}
-.duel-bar{height:12px;border-radius:999px;background:rgba(255,255,255,.14);overflow:hidden;border:1px solid rgba(255,255,255,.2)}
-.duel-fill{height:100%;width:0%;background:linear-gradient(90deg,#00d07f,#52ffbe);transition:width .08s}
-.duel-score{font-size:12px;font-weight:900}
+.emoji-task{margin-top:10px;padding:9px;border:1px solid var(--line);border-radius:13px;background:rgba(255,255,255,.06)}
+.emoji-picked{min-height:30px;margin-bottom:8px;font-size:24px;font-weight:900;color:#ffd166}
+.emoji-mini{display:grid;grid-template-columns:repeat(6,1fr);gap:5px}
+.emoji-mini button{height:32px;border:1px solid var(--line);border-radius:9px;background:rgba(255,255,255,.08);color:#fff;font-size:18px}
+.emoji-mini button.sel{border-color:var(--gold);background:rgba(255,209,102,.22)}
 .impact{animation:impact .22s ease}
 @keyframes impact{0%{transform:scale(1)}50%{transform:scale(1.09)}100%{transform:scale(1)}}
 
@@ -134,6 +134,7 @@ input,select{width:100%;padding:9px;border-radius:11px;border:1px solid var(--li
   <div class="card">
     <h1>בום של אהבה</h1>
     <p class="lead">תחרות זוגית מצחיקה, אינטימית ובלתי צפויה</p>
+    <div id="lastWinner" class="last-win"></div>
     <div class="g2"><div><label>שם שחקן/ית 1</label><input id="n1" placeholder="נועה"></div><div><label>שם שחקן/ית 2</label><input id="n2" placeholder="דניאל"></div></div>
     <div class="g2"><div><label>מין</label><select id="g1"><option value="f">נקבה</option><option value="m">זכר</option></select></div><div><label>מין</label><select id="g2"><option value="m">זכר</option><option value="f">נקבה</option></select></div></div>
     <div class="g2"><div><label>אימוג׳י שחקן/ית 1</label><div id="e1" class="eg"></div></div><div><label>אימוג׳י שחקן/ית 2</label><div id="e2" class="eg"></div></div></div>
@@ -155,9 +156,9 @@ input,select{width:100%;padding:9px;border-radius:11px;border:1px solid var(--li
 <div id="modal" class="modal"><div class="mc"><div id="mi" class="mi"></div><div id="mt" class="mt"></div><div id="mx" class="mx"></div><div id="ma" class="ma"></div></div></div>
 <div id="confetti" class="cf"></div><div id="toasts" class="toast-wrap"></div>
 <script>
-const ROWS=8,COLS=6,START=[7,5],GOAL=[0,0],IC={kiss:"💋",task:"🎯",question:"❔",temptation:"❓",duel:"⚔️",empty:"",bomb:"💣",goal:"🏆"},EM=["😈","😎","🥵","😘","😜","🫦","😏","😍","🤠","🦊","🔥","⚡","🩷","💫","🍓","🍒"];
+const ROWS=8,COLS=6,START=[7,5],GOAL=[0,0],IC={kiss:"💋",task:"🎯",question:"❔",temptation:"❓",duel:"⚔️",drink:"🍷",empty:"",bomb:"💣",goal:"🏆"},EM=["😈","😎","🥵","😘","😜","🫦","😏","😍","🤠","🦊","🔥","⚡","🩷","💫","🍓","🍒"];
 const $=id=>document.getElementById(id),board=$("board"),layer=$("layer"),modal=$("modal");
-const S={e1:"😈",e2:"😎",board:[],players:[],cur:0,turn:1,busy:false,over:false,pending:null,advance:false,forced:[null,null],history:{kiss:[],task:[],question:[],duel:[],tempt:[]},endgameShown:false,modalVersion:0,duelState:null,timer:null,drink:false,stats:{bombs:0,duels:0,risks:0}};
+const S={e1:"😈",e2:"😎",board:[],players:[],cur:0,turn:1,busy:false,over:false,pending:null,advance:false,manualMove:null,actor:null,history:{kiss:[],task:[],question:[],duel:[],tempt:[],drink:[]},endgameShown:false,modalVersion:0,timer:null,drink:false,stats:{bombs:0,duels:0,risks:0}};
 const W={m:{give:"תן",do:"עשה",say:"אמור",ask:"שאל",whisper:"לחש",choose:"בחר",look:"הסתכל",describe:"תאר"},f:{give:"תני",do:"עשי",say:"אמרי",ask:"שאלי",whisper:"לחשי",choose:"בחרי",look:"הסתכלי",describe:"תארי"}};
 const Audio={ctx:null,muted:false,ensure(){if(this.muted)return null;if(!this.ctx){const C=window.AudioContext||window.webkitAudioContext;if(!C)return null;this.ctx=new C}return this.ctx},setMuted(v){this.muted=v;if(v&&this.ctx&&this.ctx.state==="running")this.ctx.suspend();if(!v&&this.ctx&&this.ctx.state==="suspended")this.ctx.resume()},play(t){const a=this.ensure();if(!a)return;const m={tap:[370,.03],good:[620,.06],bad:[220,.09],bomb:[130,.14],win:[760,.2]}[t]||[420,.05];const o=a.createOscillator(),g=a.createGain();o.connect(g);g.connect(a.destination);o.type="sine";o.frequency.value=m[0];g.gain.value=.03;o.start();o.stop(a.currentTime+m[1])}};
 const DB = {
@@ -304,6 +305,13 @@ const DB = {
       e: "force"
     }
   ],
+
+  drink: [
+    "הרימו כוס יחד 🍷",
+    "השחקן/ית שהגיע/ה לקובייה לוקח/ת לגימה 🍷",
+    "השחקן/ית השני/ה בוחר/ת מי שותה 🍷",
+    "שותים לחיי הזוג הכי מסוכן בלוח 🍷"
+  ],
 };
 const TEXTS = {
   bomb: [
@@ -346,21 +354,23 @@ function pickText(type){
   if(!arr || !arr.length) return "";
   return fmt(arr[Math.floor(Math.random() * arr.length)]);
 }
-const DRINKS=["מצב שתייה: קחו שלוק קטן.","מצב שתייה: מי שצחק/ה ראשון/ה לוקח/ת שלוק.","מצב שתייה: לפני שממשיכים, תרימו לחיים."];
-function maybeDrinkText(x){return S.drink&&Math.random()<.16?`${x}\n\n${DRINKS[Math.floor(Math.random()*DRINKS.length)]}`:x}
 function clearTimer(){if(S.timer){clearInterval(S.timer.id);S.timer=null}}
-function timerSeconds(txt){const m=String(txt||"").match(/(?:תוך|במשך|למשך|של)\s*(\d{1,3})\s*שניות/);return m?Math.max(1,Math.min(180,+m[1])):0}
-function attachTimer(txt){const sec=timerSeconds(txt);if(!sec)return;const box=document.createElement("div"),btn=document.createElement("button"),out=document.createElement("div");box.className="timer-box";btn.className="timer-btn";btn.type="button";btn.textContent="הפעל טיימר";out.className="timer-display";out.textContent="";btn.onclick=()=>{if(S.timer)return;let left=sec;out.textContent=left;Audio.play("tap");S.timer={id:setInterval(()=>{left--;out.textContent=left>0?left:"נגמר";if(left<=0){clearTimer();Audio.play("good")}},1000)};btn.disabled=true};box.appendChild(btn);box.appendChild(out);$("mx").appendChild(box)}
+function timerSeconds(txt){txt=String(txt||"");const sm=txt.match(/(\d{1,3})\s*שניות/);if(sm)return Math.max(1,Math.min(180,+sm[1]));const dm=txt.match(/(\d{1,2})\s*דקות/);if(dm)return Math.max(60,Math.min(600,+dm[1]*60));return /דקה/.test(txt)?60:0}
+function attachTimer(txt){const sec=timerSeconds(txt);if(!sec)return;const box=document.createElement("div"),btn=document.createElement("button"),out=document.createElement("div");box.className="timer-box";btn.className="timer-btn";btn.type="button";btn.textContent="▶️ הפעל טיימר";out.className="timer-display";out.textContent="";btn.onclick=()=>{if(S.timer)return;let left=sec;out.textContent=left;Audio.play("tap");S.timer={id:setInterval(()=>{left--;out.textContent=left>0?left:"נגמר";if(left<=0){clearTimer();Audio.play("good")}},1000)};btn.disabled=true};box.appendChild(btn);box.appendChild(out);$("mx").appendChild(box)}
+function attachEmojiPicker(txt){if(!/3\s*אימוג/.test(String(txt))||!/תאר/.test(String(txt)))return;const box=document.createElement("div"),picked=document.createElement("div"),grid=document.createElement("div"),chosen=[];box.className="emoji-task";picked.className="emoji-picked";picked.textContent="בחרו 3 אימוג׳ים";grid.className="emoji-mini";EM.forEach(e=>{const b=document.createElement("button");b.type="button";b.textContent=e;b.onclick=()=>{const i=chosen.indexOf(e);if(i>=0){chosen.splice(i,1);b.classList.remove("sel")}else if(chosen.length<3){chosen.push(e);b.classList.add("sel")}picked.textContent=chosen.length?chosen.join(" "):"בחרו 3 אימוג׳ים"};grid.appendChild(b)});box.appendChild(picked);box.appendChild(grid);$("mx").appendChild(box)}
 function toast(t,ms=1500,cls=""){const e=document.createElement("div");e.className="toast"+(cls?(" "+cls):"");e.textContent=t;$("toasts").appendChild(e);setTimeout(()=>{e.style.opacity="0";e.style.transform="translateY(8px)";setTimeout(()=>e.remove(),220)},ms)}
-function pop(i,t,x,actions,adv){clearTimer();S.advance=adv;S.modalVersion++;$("mi").textContent=i||"";$("mt").textContent=t||"";$("mx").innerHTML=(x||"").replaceAll("\n","<br>");attachTimer(x);const ma=$("ma");ma.innerHTML="";ma.style.gridTemplateColumns=actions.length===1?"1fr":"repeat("+Math.min(actions.length,2)+",1fr)";actions.forEach((a,j)=>{const b=document.createElement("button");b.className="mb"+(a.kindClass?(" "+a.kindClass):"")+(j&&!a.kindClass?" alt":"");b.textContent=a.t;b.onclick=()=>act(a.k,S.modalVersion);ma.appendChild(b)});modal.classList.add("show")}
+function pop(i,t,x,actions,adv){clearTimer();S.advance=adv;S.modalVersion++;$("mi").textContent=i||"";$("mt").textContent=t||"";$("mx").innerHTML=(x||"").replaceAll("\n","<br>");attachTimer(x);attachEmojiPicker(x);const ma=$("ma");ma.innerHTML="";ma.style.gridTemplateColumns=actions.length===1?"1fr":"repeat("+Math.min(actions.length,2)+",1fr)";actions.forEach((a,j)=>{const b=document.createElement("button");b.className="mb"+(a.kindClass?(" "+a.kindClass):"")+(j&&!a.kindClass?" alt":"");b.textContent=a.t;b.onclick=()=>act(a.k,S.modalVersion);ma.appendChild(b)});modal.classList.add("show")}
 function closeModal(){clearTimer();modal.classList.remove("show");requestAnimationFrame(()=>{if(!S.over)updateMoveButtons()})}
 function wait(ms){return new Promise(r=>setTimeout(r,ms))}
-function fmt(txt){const a=S.players[S.cur],b=S.players[1-S.cur],w=W[a.gender]||W.f;let x=txt.replaceAll("{actor}",a.name).replaceAll("{target}",b.name);Object.keys(w).forEach(k=>x=x.replaceAll("{"+k+"}",w[k]));return x}
+function actorIndex(){return S.actor??(S.manualMove?S.manualMove.player:S.cur)}
+function fmt(txt,idx=actorIndex()){const a=S.players[idx],b=S.players[1-idx],w=W[a.gender]||W.f;let x=String(txt).replaceAll("{actor}",a.name).replaceAll("{target}",b.name);Object.keys(w).forEach(k=>x=x.replaceAll("{"+k+"}",w[k]));return x}
 function pickNoRepeat(cat){const arr=DB[cat],h=S.history[cat],cand=arr.filter(x=>!h.includes(x));const v=(cand.length?cand:arr)[Math.floor(Math.random()*(cand.length?cand:arr).length)];h.push(v);if(h.length>10)h.shift();return v}
 function mkEmoji(id,n){EM.forEach(v=>{const b=document.createElement("button");b.className="emoji"+((n===1?S.e1:S.e2)===v?" sel":"");b.textContent=v;b.onclick=()=>{if(n===1)S.e1=v;else S.e2=v;[...$(id).children].forEach(x=>x.classList.remove("sel"));b.classList.add("sel")};$(id).appendChild(b)})}
 mkEmoji("e1",1);mkEmoji("e2",2);
+function showLastWinner(){try{const w=localStorage.getItem("boomLastWinner"),el=$("lastWinner");if(w&&el){el.textContent=`במשחק הקודם ניצח/ה: ${w} 🏆`;el.style.display="block"}}catch(_e){}}
+showLastWinner();
 function path(){let r=START[0],c=START[1],p=[[r,c]];while(r!==GOAL[0]||c!==GOAL[1]){if(r>0&&c>0){Math.random()<.56?r--:c--}else if(r>0)r--;else c--;p.push([r,c])}return p}
-function pickType(r,c,safe){if((r===START[0]&&c===START[1])||(r===GOAL[0]&&c===GOAL[1]))return"empty";const x=Math.random();if(safe){if(x<.1)return"empty";if(x<.31)return"kiss";if(x<.51)return"task";if(x<.71)return"question";if(x<.88)return"temptation";return"duel"}if(x<.25)return"bomb";if(x<.35)return"empty";if(x<.52)return"kiss";if(x<.67)return"task";if(x<.79)return"question";if(x<.9)return"temptation";return"duel"}
+function pickType(r,c,safe){if((r===START[0]&&c===START[1])||(r===GOAL[0]&&c===GOAL[1]))return"empty";const drink=S.drink&&Math.random()<.13;if(drink)return"drink";const x=Math.random();if(safe){if(x<.1)return"empty";if(x<.31)return"kiss";if(x<.51)return"task";if(x<.71)return"question";if(x<.88)return"temptation";return"duel"}if(x<.25)return"bomb";if(x<.35)return"empty";if(x<.52)return"kiss";if(x<.67)return"task";if(x<.79)return"question";if(x<.9)return"temptation";return"duel"}
 function paint(c){const n=c.el;n.className="cell"+(c.reveal?" seen "+c.type:"");if(c.r===START[0]&&c.c===START[1])n.classList.add("start");if(c.r===GOAL[0]&&c.c===GOAL[1])n.classList.add("goal");n.innerHTML="";if(c.r===START[0]&&c.c===START[1])n.innerHTML+='<span class="badge">START</span>';if(c.r===GOAL[0]&&c.c===GOAL[1])n.innerHTML+='<span class="badge">🏆</span><span class="icon">'+IC.goal+"</span>";else if(c.reveal&&c.type!=="bomb")n.innerHTML+='<span class="icon">'+IC[c.type]+"</span>"}
 function tuneBoardTypes(){const playable=[];let duels=[];for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++){const cell=S.board[r][c];if((r===START[0]&&c===START[1])||(r===GOAL[0]&&c===GOAL[1])||cell.type==="bomb")continue;playable.push(cell);if(cell.type==="duel")duels.push(cell)}while(duels.length>6){const cell=duels.pop();cell.type=Math.random()<.5?"task":"temptation"}let empty=playable.filter(x=>x.type==="empty").length;while(empty<5&&playable.length){const cell=playable[Math.floor(Math.random()*playable.length)];if(cell.type!=="empty"){cell.type="empty";empty++}}for(let r=0;r<ROWS;r++){for(let c=2;c<COLS;c++){const a=S.board[r][c-2],b=S.board[r][c-1],cell=S.board[r][c];if(cell.type!=="bomb"&&cell.type!=="empty"&&a.type===cell.type&&b.type===cell.type)cell.type="empty"}}}
 function buildBoard(){board.innerHTML="";layer.innerHTML="";S.board=[];const safe=new Set(path().map(p=>p.join(",")));for(let r=0;r<ROWS;r++){S.board[r]=[];for(let c=0;c<COLS;c++){const el=document.createElement("div");el.className="cell";if(r===START[0]&&c===START[1])el.classList.add("start");if(r===GOAL[0]&&c===GOAL[1])el.classList.add("goal");board.appendChild(el);const cell={r,c,type:pickType(r,c,safe.has(`${r},${c}`)),reveal:false,el};S.board[r][c]=cell;const s=document.createElement("div");s.dataset.r=r;s.dataset.c=c;layer.appendChild(s)}}tuneBoardTypes();for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++)paint(S.board[r][c])}
@@ -369,24 +379,23 @@ function placeTokens(){[0,1].forEach(i=>{const t=$("t"+i),p=S.players[i],o=slotP
 function stackTokens(){const same=S.players[0].pos.join(",")===S.players[1].pos.join(",");$("t0").style.marginLeft=same?"-10px":"0";$("t1").style.marginLeft=same?"10px":"0"}
 function isEndgame(){return S.players.some(p=>Math.abs(p.pos[0]-GOAL[0])+Math.abs(p.pos[1]-GOAL[1])<=3)}
 function progress(p){return((START[0]-p[0])+(START[1]-p[1]))/((ROWS-1)+(COLS-1))}
-function edgeDistance(){return Math.abs(progress(S.players[0].pos)-progress(S.players[1].pos))}
-function updateEffects(){[0,1].forEach(i=>{const fx=[];if(S.forced[i]==="duel")fx.push("⚔️");if(S.forced[i]&&S.forced[i]!=="duel")fx.push("🎴");$("fx"+i).textContent=fx.join(" ")})}
-function ui(){S.players.forEach((p,i)=>{$("pe"+i).textContent=p.emoji;$("pn"+i).textContent=p.name;$("pc"+i).classList.toggle("a",i===S.cur)});const t=$("turn");t.classList.toggle("endgame",isEndgame());t.textContent=`תור ${S.turn} • ${S.players[S.cur].emoji} ${S.players[S.cur].name}`;board.classList.toggle("endgame",isEndgame());updateEffects();updateMoveButtons();if(isEndgame()&&!S.endgameShown){S.endgameShown=true;Audio.play("bad");toast("🔥 מצב סיום: הלחץ עולה!",1700,"danger")}}
-function updateMoveButtons(){const p=S.players[S.cur],r=p.pos[0],c=p.pos[1],lock=S.busy||S.over||modal.classList.contains("show");$("u").textContent="↑";$("d").textContent="↓";$("l").textContent="←";$("r").textContent="→";$("u").disabled=!(r>0&&!lock);$("d").disabled=!(r<ROWS-1&&!lock);$("l").disabled=!(c>0&&!lock);$("r").disabled=!(c<COLS-1&&!lock)}
+function updateEffects(){[0,1].forEach(i=>{$("fx"+i).textContent=S.manualMove&&S.manualMove.player===i?`+${S.manualMove.remaining}`:""})}
+function ui(){const active=actorIndex();S.players.forEach((p,i)=>{$("pe"+i).textContent=p.emoji;$("pn"+i).textContent=p.name;$("pc"+i).classList.toggle("a",i===active)});const t=$("turn");t.classList.toggle("endgame",isEndgame());t.textContent=S.manualMove?`${S.players[active].emoji} ${S.players[active].name} • ${S.manualMove.label}`:`תור ${S.turn} • ${S.players[S.cur].emoji} ${S.players[S.cur].name}`;board.classList.toggle("endgame",isEndgame());updateEffects();updateMoveButtons();if(isEndgame()&&!S.endgameShown){S.endgameShown=true;Audio.play("bad");toast("🔥 מצב סיום: הלחץ עולה!",1700,"danger")}}
+function canMove(i,dr,dc){const p=S.players[i],nr=p.pos[0]+dr,nc=p.pos[1]+dc;if(nr<0||nr>=ROWS||nc<0||nc>=COLS)return false;if(S.manualMove&&S.manualMove.kind==="back"){const now=Math.abs(p.pos[0]-GOAL[0])+Math.abs(p.pos[1]-GOAL[1]),next=Math.abs(nr-GOAL[0])+Math.abs(nc-GOAL[1]);return next>now}return true}
+function hasManualMoves(){if(!S.manualMove)return true;const i=S.manualMove.player;return canMove(i,-1,0)||canMove(i,1,0)||canMove(i,0,-1)||canMove(i,0,1)}
+function updateMoveButtons(){const i=S.manualMove?S.manualMove.player:S.cur,p=S.players[i],lock=S.busy||S.over||modal.classList.contains("show");$("u").textContent="↑";$("d").textContent="↓";$("l").textContent="←";$("r").textContent="→";$("u").disabled=!(canMove(i,-1,0)&&!lock);$("d").disabled=!(canMove(i,1,0)&&!lock);$("l").disabled=!(canMove(i,0,-1)&&!lock);$("r").disabled=!(canMove(i,0,1)&&!lock)}
 function pulseToken(i){const t=$("t"+i);t.classList.add("land");setTimeout(()=>t.classList.remove("land"),160)}
 async function animateToken(i,r,c){const o=slotPos(r,c),t=$("t"+i);t.style.left=o.x+"px";t.style.top=o.y+"px";await wait(280);pulseToken(i)}
-function idxFromPos(pos){return(START[0]-pos[0])+(START[1]-pos[1])}
-function coordFromIndex(idx){let rem=idx;const up=Math.min(START[0],rem);rem-=up;const left=Math.min(START[1],rem);return[START[0]-up,START[1]-left]}
 function checkVictory(i){const p=S.players[i];if(p.pos[0]===GOAL[0]&&p.pos[1]===GOAL[1]){S.over=true;winScreen(p);return true}return false}
-async function moveBySteps(i,delta){const p=S.players[i];let idx=idxFromPos(p.pos),target=Math.max(0,Math.min((ROWS-1)+(COLS-1),idx+delta)),step=target>idx?1:-1;while(idx!==target){idx+=step;p.pos=coordFromIndex(idx);await animateToken(i,p.pos[0],p.pos[1])}stackTokens();checkVictory(i)}
 async function moveToCoord(i,r,c){const t=$("t"+i);t.classList.add("warp");await wait(90);S.players[i].pos=[r,c];await animateToken(i,r,c);await wait(60);t.classList.remove("warp");stackTokens();checkVictory(i)}
-function revealNearbyBomb(pos){const d=[[1,0],[-1,0],[0,1],[0,-1]];for(const z of d){const r=pos[0]+z[0],c=pos[1]+z[1];if(r>=0&&r<ROWS&&c>=0&&c<COLS){const cell=S.board[r][c];if(cell.type==="bomb"){const s=document.createElement("span");s.className="icon preview";s.textContent="💣";cell.el.appendChild(s);setTimeout(()=>s.remove(),1500);break}}}}
-async function bombHit(){S.stats.bombs++;if(navigator.vibrate)navigator.vibrate([80,70,120]);Audio.play("bomb");board.classList.add("shake");setTimeout(()=>board.classList.remove("shake"),450);await moveToCoord(S.cur,START[0],START[1]);
+function startManualMove(player,steps,kind,msg){S.manualMove={player,remaining:steps,kind,label:`${steps} צעדים ידניים`};S.actor=null;closeModal();S.busy=false;toast(msg,1800,"warn");if(!hasManualMoves()){toast("אין צעדים זמינים — ממשיכים",1000);S.manualMove=null;nextTurn();return}ui()}
+async function bombHit(i=actorIndex()){S.manualMove=null;S.stats.bombs++;if(navigator.vibrate)navigator.vibrate([80,70,120]);Audio.play("bomb");board.classList.add("shake");setTimeout(()=>board.classList.remove("shake"),450);await moveToCoord(i,START[0],START[1]);
 toast("💥 בום! חזרה להתחלה",1300,"danger");
 card("💥","בום!",pickText("bomb"));
 }
 
-async function tileRevealFlow(cell){
+async function tileRevealFlow(cell,actor=S.cur){
+  S.actor=actor;
   cell.el.classList.add("glow");
   await wait(180);
   cell.el.classList.remove("glow");
@@ -402,37 +411,36 @@ async function tileRevealFlow(cell){
   if(cell.type==="bomb"){
     await wait(760);
     pv.remove();
-    await bombHit();
+    await bombHit(actor);
+    S.actor=null;
     return;
   }
 
   await wait(680);
   pv.remove();
   await resolveCell(cell);
+  S.actor=null;
 }
 async function resolveCell(cell){
-  const forced=S.forced[S.cur];
-  if(forced&&cell.type!=="bomb"){cell.type=forced;S.forced[S.cur]=null;toast("🎴 קלף כפוי הופעל",1000)}
-  if(cell.type==="bomb"){await bombHit();return}
+  if(cell.type==="bomb"){await bombHit(actorIndex());return}
   cell.reveal=true;paint(cell);
   if(cell.type==="kiss"){card("💋","אינטימיות",fmt(pickNoRepeat("kiss")));return}
   if(cell.type==="task"){card("🎯","אתגר",fmt(pickNoRepeat("task")));return}
   if(cell.type==="question"){card("❔","שאלה",fmt(pickNoRepeat("question")));return}
+  if(cell.type==="drink"){card("🍷","שתייה",fmt(pickNoRepeat("drink")));return}
   if(cell.type==="duel"){startDuel();return}
   if(cell.type==="temptation"){startTemptation();return}
   if(cell.type==="empty"){toast("ריק — ממשיכים",900);if(!S.over)nextTurn();return}
 }
-function card(i,t,x){pop(i,t,maybeDrinkText(x),[{t:"בוצע",k:"done"}],true)}
-function startTemptation(){S.stats.risks++;const t=pickNoRepeat("tempt");S.pending={k:"tempt",d:t};pop("❓","הימור",`האם לקחת סיכון?\n\n${fmt(t.c)}\nהצלחה: ${fmt(t.win)}\nכישלון: ${fmt(t.lose)}`,[{t:"לקחת סיכון",k:"risk",kindClass:"bad"},{t:"לוותר בבטחה",k:"safe",kindClass:"alt"}],true)}
-function startDuel(){S.stats.duels++;const d=pickNoRepeat("duel");S.pending={k:"duel_intro",d};pop("⚔️","דו-קרב",`${fmt(d)}\n\nמוכנים?`,[{t:"התחל",k:"duelStart"}],true)}
+function card(i,t,x){pop(i,t,x,[{t:"בוצע",k:"done"}],true)}
+function startTemptation(){S.stats.risks++;const t=pickNoRepeat("tempt"),player=actorIndex();S.pending={k:"tempt",d:t,player};pop("❓","הימור",`האם לקחת סיכון?\n\n${fmt(t.c,player)}\nהצלחה: ${fmt(t.win,player)}\nכישלון: ${fmt(t.lose,player)}`,[{t:"לקחת סיכון",k:"risk",kindClass:"bad"},{t:"לוותר בבטחה",k:"safe",kindClass:"alt"}],true)}
+function startDuel(){S.stats.duels++;const d=pickNoRepeat("duel"),player=actorIndex();S.pending={k:"duel_result",d,player};pop("⚔️","דו־קרב",`${fmt(d,player)}\n\nבצעו עכשיו את הדו־קרב בעולם האמיתי.\n\nמי ניצח/ה?`,[{t:`${S.players[0].name} ניצח/ה`,k:"duelWin0",kindClass:"good"},{t:`${S.players[1].name} ניצח/ה`,k:"duelWin1",kindClass:"good"}],false)}
 function openSuccessFail(){clearTimer();$("mt").textContent="תוצאת ההימור";$("mx").textContent="מה הייתה התוצאה?";const ma=$("ma");ma.innerHTML="";ma.style.gridTemplateColumns="1fr 1fr";const s=document.createElement("button"),f=document.createElement("button");s.className="mb good";f.className="mb bad";s.textContent="הצלחנו";f.textContent="נכשלנו";s.onclick=()=>act("succ",S.modalVersion);f.onclick=()=>act("fail",S.modalVersion);ma.appendChild(s);ma.appendChild(f)}
-function abortDuelSafe(){if(S.pending&&S.pending.k==="duel_tap"){S.pending=null;S.duelState=null;closeModal();if(!S.over&&S.advance)nextTurn();S.busy=false;updateMoveButtons();toast("⚠️ הדו-קרב בוטל והמשחק נמשך",1200,"warn")}}
-async function runDuelTapGame(){try{S.pending={k:"duel_tap"};S.duelState={s0:0,s1:0,done:false};if(S.duelTimer)clearTimeout(S.duelTimer);for(const x of["3","2","1","GO"]){$("mx").innerHTML=`<div class="duel-count">${x}</div>`;Audio.play("tap");await wait(410)}const ma=$("ma");if(!ma){abortDuelSafe();return}ma.innerHTML="";$("mx").innerHTML="לחצו מהר! מי שמגיע/ה ל-12 ראשון/ה מנצח/ת";const wrap=document.createElement("div");wrap.className="duel-row";const mk=i=>{const l=document.createElement("div");l.className="duel-line";l.innerHTML=`<div class="duel-name">${S.players[i].name}</div><div class="duel-bar"><div id="df${i}" class="duel-fill"></div></div><div id="ds${i}" class="duel-score">0</div>`;return l};wrap.appendChild(mk(0));wrap.appendChild(mk(1));const b0=document.createElement("button"),b1=document.createElement("button");b0.className="mb good";b1.className="mb good";b0.textContent="Tap!";b1.textContent="Tap!";const redraw=()=>{const ds0=$("ds0"),ds1=$("ds1"),df0=$("df0"),df1=$("df1");if(!ds0||!ds1||!df0||!df1)return;ds0.textContent=S.duelState.s0;ds1.textContent=S.duelState.s1;df0.style.width=Math.min(100,S.duelState.s0/12*100)+"%";df1.style.width=Math.min(100,S.duelState.s1/12*100)+"%"};redraw();const finish=()=>{if(!S.duelState||S.duelState.done)return;if(S.duelState.s0>=12||S.duelState.s1>=12)finishDuel(S.duelState.s0>=12?0:1)};b0.onclick=()=>{if(!S.duelState||S.duelState.done)return;S.duelState.s0++;Audio.play("tap");b0.classList.add("impact");setTimeout(()=>b0.classList.remove("impact"),120);redraw();finish()};b1.onclick=()=>{if(!S.duelState||S.duelState.done)return;S.duelState.s1++;Audio.play("tap");b1.classList.add("impact");setTimeout(()=>b1.classList.remove("impact"),120);redraw();finish()};ma.appendChild(wrap);ma.appendChild(b0);ma.appendChild(b1);S.duelTimer=setTimeout(()=>{if(S.pending&&S.pending.k==="duel_tap"&&S.duelState&&!S.duelState.done){const w=S.duelState.s0===S.duelState.s1?(Math.random()<.5?0:1):(S.duelState.s0>S.duelState.s1?0:1);finishDuel(w)}},4600);setTimeout(()=>{if(S.pending&&S.pending.k==="duel_tap"&&(!ma.children.length||!$("df0")||!$("df1")))abortDuelSafe()},700)}catch(_e){abortDuelSafe()}}
-async function finishDuel(w){if(!S.duelState||S.duelState.done)return;S.duelState.done=true;if(S.duelTimer){clearTimeout(S.duelTimer);S.duelTimer=null}const l=1-w,boost=isEndgame()?3:2,push=isEndgame()?-2:-1;$("mx").innerHTML=`🏅 ${S.players[w].name} ניצח/ה!<br>+${boost} למנצח/ת • ${push} למפסיד/ה`;$("mi").classList.add("impact");setTimeout(()=>$("mi").classList.remove("impact"),240);Audio.play("good");await wait(500);await moveBySteps(w,boost);if(S.over){S.pending=null;S.duelState=null;return}await moveBySteps(l,push);if(S.over){S.pending=null;S.duelState=null;return}S.forced[l]=["kiss","task","question","temptation"][Math.floor(Math.random()*4)];toast("⚔️ קלף כפוי למפסיד/ה בתור הבא",1300);S.pending=null;S.duelState=null;closeModal();if(!S.over&&S.advance)nextTurn()}
-async function applyTemptOutcome(d,success){const me=S.cur;if(success){const steps=fmt(d.win).includes("+3")?3:2;await moveBySteps(me,steps);return`ההימור הצליח: ${fmt(d.win)}`}const steps=fmt(d.lose).includes("צעד אחד")?-1:-2;await moveBySteps(me,steps);return`ההימור נכשל: ${fmt(d.lose)}`}
+function applyTemptOutcome(x,success){const player=x.player,txt=success?fmt(x.d.win,player):fmt(x.d.lose,player),steps=success?(txt.includes("+3")?3:2):(txt.includes("צעד אחד")?1:2),kind=success?"forward":"back";startManualMove(player,steps,kind,`${success?"ההימור הצליח":"ההימור נכשל"}: ${txt}. בחר/י ${steps} צעדים ידנית.`)}
 function microTitle(){const a=S.stats.bombs<3?"שורדי הפצצות":"מכורי הסיכון",b=S.stats.duels>6?"אלופי הדו-קרב":"מלכי הפלרטוט";return`${a} • ${b}`}
 function confetti(){const f=$("confetti");f.innerHTML="";for(let i=0;i<110;i++){const d=document.createElement("div");d.className="c";d.style.left=Math.random()*100+"vw";d.style.background=["#ff2f7d","#ffd166","#46a3ff","#8cff8c","#fff"][Math.floor(Math.random()*5)];d.style.animationDelay=(Math.random()*.5)+"s";f.appendChild(d)}setTimeout(()=>f.innerHTML="",2500)}
 function winScreen(w){
+  try{localStorage.setItem("boomLastWinner",w.name)}catch(_e){}
   const funny = pickText("victory");
   const stats = `<div class="stats"><div class="stat">תורים: ${S.turn}</div><div class="stat">פצצות: ${S.stats.bombs}</div><div class="stat">דואלים: ${S.stats.duels}</div><div class="stat">הימורים: ${S.stats.risks}</div></div>`;
 
@@ -447,11 +455,11 @@ function winScreen(w){
   Audio.play("win");
   confetti();
 }
-async function resolvePending(k){const x=S.pending;if(!x)return false;if(x.k==="tempt"){if(k==="safe"){S.pending=null;toast("🙂 ויתרתם בבטחה",1000);Audio.play("tap");return false}if(k==="risk"){S.pending={k:"tempt2",d:x.d};openSuccessFail();return true}}if(x.k==="tempt2"){const succ=k==="succ";Audio.play(succ?"good":"bad");const msg=await applyTemptOutcome(x.d,succ);S.pending=null;if(!S.over)toast(msg,1300,succ?"warn":"danger");await wait(180);return false}if(x.k==="duel_intro"&&k==="duelStart"){runDuelTapGame().catch(()=>abortDuelSafe());return true}return false}
+async function resolvePending(k){const x=S.pending;if(!x)return false;if(x.k==="tempt"){if(k==="safe"){S.pending=null;toast("🙂 ויתרתם בבטחה",1000);Audio.play("tap");return false}if(k==="risk"){S.pending={k:"tempt2",d:x.d,player:x.player};openSuccessFail();return true}}if(x.k==="tempt2"){const succ=k==="succ";Audio.play(succ?"good":"bad");S.pending=null;applyTemptOutcome(x,succ);return true}if(x.k==="duel_result"&&k.startsWith("duelWin")){const w=+k.slice(-1);S.pending=null;Audio.play("good");startManualMove(w,2,"forward",`${S.players[w].name} ניצח/ה בדו־קרב ⚔️ — בחר/י 2 צעדים. פצצה בדרך עוצרת את התנועה.`);return true}return false}
 async function applyModalAction(k,v){if(v!==S.modalVersion)return;if(k==="restart"){location.reload();return}if(k==="mute"){Audio.setMuted(!Audio.muted);toast(Audio.muted?"🔇 סאונד הושתק":"🔈 סאונד הופעל",900);closeModal();S.busy=false;updateMoveButtons();return}if(k==="help"){pop("ℹ️","עזרה","מטרה: להגיע ראשונים לגביע.\n💋 אינטימיות\n🎯 משימה\n❔ שאלה\n❓ הימור\n⚔️ דו־קרב\n💣 פצצה מחזירה להתחלה ונשארת פעילה\nריק = אין פעולה\n\nאם מופיע טקסט עם זמן, אפשר להפעיל טיימר. הטיימר לא מקדם תור לבד.\nכל משימה היא הזמנה בלבד. אם לא מתאים לכם לבצע משהו, פשוט לחצו בוצע והמשיכו.",[{t:"חזרה",k:"resume"}],false);return}if(k==="newGame"){location.reload();return}if(k==="resume"){closeModal();S.busy=false;updateMoveButtons();return}let opened=false;if(S.pending)opened=await resolvePending(k);if(opened)return;if(S.over)return;closeModal();if(S.advance)nextTurn();updateMoveButtons()}
-async function moveTurn(dr,dc){if(S.busy||S.over||modal.classList.contains("show"))return;const me=S.cur,p=S.players[me],nr=p.pos[0]+dr,nc=p.pos[1]+dc;if(nr<0||nr>=ROWS||nc<0||nc>=COLS)return;S.busy=true;updateMoveButtons();p.pos=[nr,nc];await animateToken(me,nr,nc);stackTokens();if(checkVictory(me)){S.busy=false;updateMoveButtons();return}await tileRevealFlow(S.board[nr][nc]);S.busy=false;ui()}
+async function moveTurn(dr,dc){if(S.busy||S.over||modal.classList.contains("show"))return;const manual=S.manualMove,me=manual?manual.player:S.cur,p=S.players[me],nr=p.pos[0]+dr,nc=p.pos[1]+dc;if(!canMove(me,dr,dc))return;S.busy=true;updateMoveButtons();p.pos=[nr,nc];await animateToken(me,nr,nc);stackTokens();if(checkVictory(me)){S.manualMove=null;S.busy=false;updateMoveButtons();return}const cell=S.board[nr][nc];if(manual){manual.remaining--;if(cell.type==="bomb"){S.manualMove=null;await tileRevealFlow(cell,me);S.busy=false;ui();return}if(manual.remaining>0){S.busy=false;if(!hasManualMoves()){toast("אין עוד צעדים זמינים — התנועה הסתיימה",1100);S.manualMove=null;nextTurn()}else ui();return}S.manualMove=null;await tileRevealFlow(cell,me);S.busy=false;ui();return}await tileRevealFlow(cell,me);S.busy=false;ui()}
 function nextTurn(){S.cur=1-S.cur;S.turn++;ui()}
-function startGame(){S.players=[{name:$("n1").value.trim()||"שחקן א",gender:$("g1").value,emoji:S.e1,pos:[...START]},{name:$("n2").value.trim()||"שחקן ב",gender:$("g2").value,emoji:S.e2,pos:[...START]}];S.cur=0;S.turn=1;S.busy=false;S.over=false;S.pending=null;S.advance=false;S.forced=[null,null];S.history={kiss:[],task:[],question:[],duel:[],tempt:[]};S.stats={bombs:0,duels:0,risks:0};S.endgameShown=false;S.modalVersion=0;S.drink=$("drinkMode").checked;buildBoard();$("start").classList.remove("show");$("game").classList.add("show");ui();placeTokens();pop("💘","מתחילים","💋 אינטימיות\n🎯 משימה\n❔ שאלה\n❓ הימור\n⚔️ דו־קרב\n💣 פצצה\nריק = אין פעולה\n\nכל משימה היא הזמנה בלבד. אם לא מתאים לכם לבצע משהו, פשוט לחצו בוצע והמשיכו.",[{t:"בוצע",k:"resume"}],false)}
+function startGame(){S.players=[{name:$("n1").value.trim()||"שחקן א",gender:$("g1").value,emoji:S.e1,pos:[...START]},{name:$("n2").value.trim()||"שחקן ב",gender:$("g2").value,emoji:S.e2,pos:[...START]}];S.cur=0;S.turn=1;S.busy=false;S.over=false;S.pending=null;S.advance=false;S.manualMove=null;S.actor=null;S.history={kiss:[],task:[],question:[],duel:[],tempt:[],drink:[]};S.stats={bombs:0,duels:0,risks:0};S.endgameShown=false;S.modalVersion=0;S.drink=$("drinkMode").checked;buildBoard();$("start").classList.remove("show");$("game").classList.add("show");ui();placeTokens();const drinkLine=S.drink?'\n🍷 שתייה — משימת שתייה קלילה במהלך המשחק':"";pop("💘","מתחילים",`💋 אינטימיות\n🎯 משימה\n❔ שאלה\n❓ הימור\n⚔️ דו־קרב\n💣 פצצה${drinkLine}\nריק = אין פעולה\n\nכל משימה היא הזמנה בלבד. אם לא מתאים לכם לבצע משהו, פשוט לחצו בוצע והמשיכו.`,[{t:"בוצע",k:"resume"}],false)}
 function openSettings(){pop("⚙️","הגדרות","",[{t:Audio.muted?"הפעלת סאונד":"השתקת סאונד",k:"mute"},{t:"עזרה",k:"help"},{t:"משחק חדש",k:"newGame"},{t:"חזרה למשחק",k:"resume"}],false)}
 $("startBtn").onclick=startGame;$("settingsBtn").onclick=openSettings;$("u").onclick=()=>moveTurn(-1,0);$("d").onclick=()=>moveTurn(1,0);$("l").onclick=()=>moveTurn(0,-1);$("r").onclick=()=>moveTurn(0,1);
 window.addEventListener("pointerdown",()=>Audio.ensure(),{once:true});
