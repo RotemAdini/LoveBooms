@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no" />
-<title>בום של אהבה</title>
+<title>פצצות אהבה</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;700;900&display=swap" rel="stylesheet">
@@ -19,12 +19,13 @@ button,input,select{font-family:inherit}
 h1{margin:0 0 6px;text-align:center;font-size:clamp(30px,8vw,52px);font-weight:900;line-height:1.05;background:linear-gradient(120deg,#fff,var(--pink),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 .lead{margin:0 0 10px;text-align:center;color:var(--muted);font-size:12.5px;line-height:1.45}
 .last-win{display:none;margin:0 0 9px;text-align:center;padding:7px 10px;border:1px solid rgba(255,209,102,.4);border-radius:13px;background:rgba(255,209,102,.1);color:#ffd166;font-size:12px;font-weight:900}
+.start-step{display:grid;gap:7px}
+.start-step.hide{display:none}
 .g2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:7px}
 .g2>div{min-width:0}
 label{display:block;color:var(--muted);font-size:11px;font-weight:700;margin:6px 0 3px}
 input,select{width:100%;min-width:0;padding:9px;border-radius:11px;border:1px solid var(--line);background:rgba(255,255,255,.08);color:#fff}
-.drink{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:10px;padding:9px 11px;border:1px solid var(--line);border-radius:13px;background:rgba(255,255,255,.07);color:var(--muted);font-size:12px;font-weight:900}
-.drink input{width:22px;height:22px;accent-color:var(--pink)}
+.drink{display:grid;gap:5px;margin-top:10px;padding:9px 11px;border:1px solid var(--line);border-radius:13px;background:rgba(255,255,255,.07);color:var(--muted);font-size:12px;font-weight:900}
 .eg{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:5px}
 .emoji{min-width:0;height:34px;border:1px solid var(--line);border-radius:9px;background:rgba(255,255,255,.08);color:#fff;font-size:19px}
 .emoji.sel{border-color:transparent;background:linear-gradient(130deg,var(--pink2),var(--pink))}
@@ -119,7 +120,7 @@ input,select{width:100%;min-width:0;padding:9px;border-radius:11px;border:1px so
 @keyframes fall{to{transform:translateY(110vh) rotate(540deg);opacity:.1}}
 
 .toast-wrap{position:fixed;z-index:30;left:50%;bottom:calc(12px + env(safe-area-inset-bottom));transform:translateX(-50%);display:grid;gap:6px;pointer-events:none}
-.toast{max-width:88vw;padding:8px 12px;border-radius:12px;border:1px solid rgba(255,255,255,.22);background:rgba(15,9,25,.9);font-size:12px;font-weight:800;text-align:center;animation:toast .2s ease}
+.toast{max-width:88vw;padding:8px 12px;border-radius:12px;border:1px solid rgba(255,255,255,.22);background:rgba(15,9,25,.9);font-size:12px;font-weight:800;text-align:center;white-space:pre-line;animation:toast .2s ease}
 @keyframes toast{from{transform:translateY(8px);opacity:0}to{transform:translateY(0);opacity:1}}
 .toast.warn{border-color:rgba(255,209,102,.55)}.toast.danger{border-color:rgba(255,79,104,.65)}
 .trophy-big{font-size:78px;animation:bounce 1s ease infinite alternate}
@@ -136,7 +137,7 @@ input,select{width:100%;min-width:0;padding:9px;border-radius:11px;border:1px so
 .debug-panel .danger{border-color:rgba(255,79,104,.7);background:rgba(255,79,104,.18)}
 
 @media(max-width:390px){.board{height:min(70dvh,650px)}.pc{min-height:40px;font-size:12px}.wins{font-size:10px;min-width:22px;padding:1px 5px}.mv{height:36px}.mt{font-size:19px}.mx{font-size:13px}.timer-display{font-size:24px}}
-@media(max-width:760px){#start{align-items:flex-start}.card{padding:12px}#start .g2{grid-template-columns:1fr}#start .eg{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:760px){#start{align-items:flex-start}.card{padding:12px}#start .g2:not(.emoji-row){grid-template-columns:1fr}}
 @media(max-width:350px){.ma{grid-template-columns:1fr!important}.mc{padding:12px}.mb{min-height:40px;padding:10px}.players{grid-template-columns:minmax(0,1fr) 22px minmax(0,1fr);gap:4px}}
 @media(max-width:430px){.debug-panel{left:8px;right:8px;top:8px;max-height:50dvh;overflow:auto}}
 @media(max-height:730px){.title{display:none}.board{height:min(68dvh,620px)}.mv{height:36px}}
@@ -146,20 +147,26 @@ input,select{width:100%;min-width:0;padding:9px;border-radius:11px;border:1px so
 <div class="bg"></div>
 <section id="start" class="screen show">
   <div class="card">
-    <h1>בום של אהבה</h1>
-    <p class="lead">תחרות זוגית מצחיקה, אינטימית ובלתי צפויה</p>
-    <div id="lastWinner" class="last-win"></div>
-    <div class="g2"><div><label>שם משתתף 1</label><input id="n1" placeholder="נועה"></div><div><label>שם משתתף 2</label><input id="n2" placeholder="דניאל"></div></div>
-    <div class="g2"><div><label>מין</label><select id="g1"><option value="f">נקבה</option><option value="m">זכר</option></select></div><div><label>מין</label><select id="g2"><option value="m">זכר</option><option value="f">נקבה</option></select></div></div>
-    <div class="g2"><div><label>אימוג׳י משתתף 1</label><div id="e1" class="eg"></div></div><div><label>אימוג׳י משתתף 2</label><div id="e2" class="eg"></div></div></div>
-    <label class="drink"><span>מצב שתייה 🥂</span><input id="drinkMode" type="checkbox"></label>
-    <button class="main" id="startBtn">יאללה מתחילים</button>
+    <div id="startWelcome" class="start-step">
+      <h1>פצצות אהבה</h1>
+      <p class="lead">משחק זוגי קצר, מצחיק ותחרותי עם משימות, שאלות, דו־קרבות והפתעות על הלוח.</p>
+      <div id="lastWinner" class="last-win"></div>
+      <button class="main" id="setupBtn">בואו נתחיל</button>
+    </div>
+    <div id="startSetup" class="start-step hide">
+      <h1>פצצות אהבה</h1>
+      <div class="g2"><div><label>שם משתתף 1</label><input id="n1" placeholder="נועה"></div><div><label>שם משתתף 2</label><input id="n2" placeholder="דניאל"></div></div>
+      <div class="g2"><div><label>מין</label><select id="g1"><option value="f">נקבה</option><option value="m">זכר</option></select></div><div><label>מין</label><select id="g2"><option value="m">זכר</option><option value="f">נקבה</option></select></div></div>
+      <div class="g2 emoji-row"><div><label>אימוג׳י משתתף 1</label><div id="e1" class="eg"></div></div><div><label>אימוג׳י משתתף 2</label><div id="e2" class="eg"></div></div></div>
+      <label class="drink"><span>מצב שתייה 🥂</span><select id="drinkMode"><option value="none">No Drinking</option><option value="light">Light Drinking</option><option value="wild">Wild Drinking</option></select></label>
+      <button class="main" id="startBtn">התחל משחק</button>
+    </div>
   </div>
 </section>
 <section id="game" class="screen">
   <div class="wrap">
     <div class="top">
-      <div class="head"><button id="settingsBtn" class="set">⚙️</button><div id="gameTitle" class="title">בום של אהבה</div><div></div></div>
+      <div class="head"><button id="settingsBtn" class="set">⚙️</button><div id="gameTitle" class="title">פצצות אהבה</div><div></div></div>
       <div class="players"><div id="pc0" class="pc"><span id="pe0"></span><span id="pn0" class="pname"></span><span id="pw0" class="wins"></span><div id="fx0" class="fx"></div></div><div>VS</div><div id="pc1" class="pc"><span id="pe1"></span><span id="pn1" class="pname"></span><span id="pw1" class="wins"></span><div id="fx1" class="fx"></div></div></div>
       <div id="turn" class="turn"></div>
     </div>
@@ -185,14 +192,14 @@ input,select{width:100%;min-width:0;padding:9px;border-radius:11px;border:1px so
 </div>
 <div id="confetti" class="cf"></div><div id="toasts" class="toast-wrap"></div>
 <script>
-const ROWS=8,COLS=6,START=[7,5],GOAL=[0,0],IC={kiss:"💋",task:"🎯",question:"❔",temptation:"❓",duel:"⚔️",drink:"🥂",empty:"",bomb:"💣",goal:"🏆"},EM=["😈","😎","🥵","😘","😜","🫦","😏","😍","🤠","🦊","🔥","⚡","🩷","💫","🍓","🍒"];
+const ROWS=8,COLS=6,START=[7,5],GOAL=[0,0],IC={kiss:"💋",task:"🎯",question:"❔",temptation:"❓",duel:"⚔️",drink:"🥂",empty:"⬜",bomb:"💣",goal:"🏆"},EM=["😈","😎","🥵","😘","😜","🫦","😏","😍","🤠","🦊","🔥","⚡","🩷","💫","🍓","🍒"];
 const $=id=>document.getElementById(id),board=$("board"),layer=$("layer"),modal=$("modal");
-const S={e1:"😈",e2:"😎",board:[],players:[],cur:0,turn:1,busy:false,over:false,pending:null,advance:false,manualMove:null,actor:null,history:{kiss:[],task:[],question:[],duel:[],tempt:[],drink:[]},endgameShown:false,modalVersion:0,timer:null,drink:false,stats:{bombs:0,duels:0,risks:0},debug:false,debugForce:null,debugTaps:[]};
+const S={e1:"😈",e2:"😎",board:[],players:[],cur:0,turn:1,busy:false,over:false,pending:null,advance:false,manualMove:null,actor:null,history:{kiss:[],task:[],question:[],duel:[],tempt:[],drink:[]},endgameShown:false,modalVersion:0,timer:null,drink:false,drinkMode:"none",modalState:null,stats:{bombs:0,duels:0,risks:0,drinks:0,empty:0},debug:false,debugForce:null,debugTaps:[]};
 const W={
   m:{give:"תן",do:"עשה",say:"אמור",ask:"שאל",whisper:"לחש",choose:"בחר",look:"הסתכל",describe:"תאר",tell:"ספר",try:"נסה",hold:"החזק",invent:"המצא",make:"גרום",take:"קח",return:"חזור",drink:"שתה",stand:"עמוד",show:"הראה",perform:"בצע",start:"תלחץ",answer:"ענה",count:"מנה",touch:"גע",keep:"שמור",win:"ניצח",fail:"נכשל",ready:"מוכן"},
   f:{give:"תני",do:"עשי",say:"אמרי",ask:"שאלי",whisper:"לחשי",choose:"בחרי",look:"הסתכלי",describe:"תארי",tell:"ספרי",try:"נסי",hold:"החזיקי",invent:"המציאי",make:"גרמי",take:"קחי",return:"חזרי",drink:"שתי",stand:"עמדי",show:"הראי",perform:"בצעי",start:"תלחצי",answer:"עני",count:"מני",touch:"געי",keep:"שמרי",win:"ניצחה",fail:"נכשלה",ready:"מוכנה"}
 };
-const WIN_KEY="boomLifetimeWins";
+const WIN_KEY="boomLifetimeWins",SAVE_KEY="loveBombsSavedGame",HISTORY_KEY="loveBombsGameHistory",DRINK_COUNTS={none:0,light:5,wild:10},FEEDBACK_URL="mailto:feedback@example.com?subject=%D7%A4%D7%99%D7%93%D7%91%D7%A7%20%D7%A4%D7%A6%D7%A6%D7%95%D7%AA%20%D7%90%D7%94%D7%91%D7%94";
 const Audio={ctx:null,muted:false,ensure(){if(this.muted)return null;if(!this.ctx){const C=window.AudioContext||window.webkitAudioContext;if(!C)return null;this.ctx=new C}return this.ctx},setMuted(v){this.muted=v;if(v&&this.ctx&&this.ctx.state==="running")this.ctx.suspend();if(!v&&this.ctx&&this.ctx.state==="suspended")this.ctx.resume()},play(t){const a=this.ensure();if(!a)return;const m={tap:[370,.03],good:[620,.06],bad:[220,.09],bomb:[130,.14],win:[760,.2]}[t]||[420,.05];const o=a.createOscillator(),g=a.createGain();o.connect(g);g.connect(a.destination);o.type="sine";o.frequency.value=m[0];g.gain.value=.03;o.start();o.stop(a.currentTime+m[1])}};
 const DB = {
   kiss:[
@@ -306,12 +313,12 @@ const DB = {
     {c:"{actor}, יש לך 15 שניות לומר 6 מילים שמתחילות באות ש'",win:"+2 צעדים",lose:"חזרה צעד אחד בלי להפעיל קובייה"}
   ],
   drink:[
-    "{actor}, {drink} לגימה קטנה לכבוד התחרות 🥂",
-    "{actor}, {choose} מי מרים כוס עכשיו 🥂",
-    "{actor}, {say} טוסט קצר ל{target} ואז {drink} לגימה 🥂",
+    "{actor}, {drink} לגימה קטנה 🥂",
+    "{actor}, {drink} שתי לגימות קלילות 🥂",
+    "{actor}, {drink} לגימה איטית 🥂",
     "{actor}, {drink} לגימה אם חייכת בתור האחרון 🥂",
-    "{actor}, {choose} כלל שתייה קטן לתור הבא בלבד 🥂",
-    "{actor}, {drink} לגימה ותגיד מילה אחת על מצב הרוח שלך 🥂"
+    "{actor}, {drink} לגימה לכבוד המשחק 🥂",
+    "{actor}, {drink} לגימה וחוזרים ללוח 🥂"
   ]
 };
 const TEXTS = {
@@ -349,18 +356,36 @@ function manualStepText(n){return `${stepText(n)} ${n===1?"ידני":"ידניי
 function wonText(i){const p=S.players[i];return `${p.name} ${p.gender==="m"?"ניצח":"ניצחה"}`}
 function readWins(){try{const x=JSON.parse(localStorage.getItem(WIN_KEY)||"{}");return x&&typeof x==="object"?x:{}}catch(_e){return {}}}
 function writeWins(x){try{localStorage.setItem(WIN_KEY,JSON.stringify(x))}catch(_e){}}
-function resetWins(){try{localStorage.removeItem(WIN_KEY);localStorage.removeItem("boomLastWinner")}catch(_e){}if(S.players.length){S.players.forEach(p=>p.wins=0);ui()}}
+function resetWins(){try{localStorage.removeItem(WIN_KEY);localStorage.removeItem("boomLastWinner")}catch(_e){}if(S.players.length){S.players.forEach(p=>p.wins=0);ui();saveGame()}}
 function winKey(name){return String(name||"").trim().toLowerCase()||"שחקן"}
-function getWins(name){const x=readWins()[winKey(name)];return Number.isFinite(+x)?Math.max(0,+x):0}
-function recordWin(name){const wins=readWins(),key=winKey(name),prev=getWins(name),total=prev+1;wins[key]=total;writeWins(wins);return{prev,total}}
+function winValue(x){return x&&typeof x==="object"?+x.total:+x}
+function getWins(name){const x=readWins()[winKey(name)],v=winValue(x);return Number.isFinite(v)?Math.max(0,v):0}
+function recordWin(name){const wins=readWins(),key=winKey(name),prev=getWins(name),total=prev+1;wins[key]={name:String(name||key),total};writeWins(wins);return{prev,total}}
+function leaderboardEntries(){return Object.entries(readWins()).map(([key,val])=>({name:val&&typeof val==="object"&&val.name?val.name:key,wins:getWins(key)||Math.max(0,winValue(val)||0)})).filter(x=>x.wins>0).sort((a,b)=>b.wins-a.wins||a.name.localeCompare(b.name))}
+function readHistory(){try{const x=JSON.parse(localStorage.getItem(HISTORY_KEY)||"[]");return Array.isArray(x)?x:[]}catch(_e){return []}}
+function writeHistory(x){try{localStorage.setItem(HISTORY_KEY,JSON.stringify(x.slice(0,20)))}catch(_e){}}
+function recordHistory(winner,title){const item={winner:winner.name,turn:S.turn,bombs:S.stats.bombs,duels:S.stats.duels,risks:S.stats.risks,drinks:S.stats.drinks||0,empty:S.stats.empty||0,mode:S.drinkMode,date:new Date().toLocaleDateString("he-IL"),title};writeHistory([item,...readHistory()])}
+function readSavedGame(){try{const x=JSON.parse(localStorage.getItem(SAVE_KEY)||"null");return x&&x.version===2?x:null}catch(_e){return null}}
+function clearSavedGame(){try{localStorage.removeItem(SAVE_KEY)}catch(_e){}}
+function boardSnapshot(){return S.board.map(row=>row.map(c=>({type:c.type,reveal:!!c.reveal})))}
+function saveGame(){
+  if(!S.players.length||S.over)return;
+  try{
+    localStorage.setItem(SAVE_KEY,JSON.stringify({
+      version:2,ts:Date.now(),players:S.players.map(p=>({name:p.name,gender:p.gender,emoji:p.emoji,pos:p.pos,wins:p.wins||0})),
+      cur:S.cur,turn:S.turn,board:boardSnapshot(),manualMove:S.manualMove,history:S.history,endgameShown:S.endgameShown,
+      drinkMode:S.drinkMode,stats:S.stats,pending:S.pending,advance:S.advance,actor:S.actor,modalState:S.modalState
+    }))
+  }catch(_e){}
+}
 function timedIntroText(player){const w=W[S.players[player].gender]||W.f;return `לפניך משימה מוגבלת בזמן. ברגע ש${w.start} על "התחל", הטיימר יתחיל לרוץ. עליך להספיק לבצע את המשימה בזמן.`}
 function clearTimer(){if(S.timer){clearInterval(S.timer.id);S.timer=null}}
 function timerSeconds(txt){txt=String(txt||"");const sm=txt.match(/(\d{1,3})\s*שניות/);if(sm)return Math.max(1,Math.min(180,+sm[1]));const dm=txt.match(/(\d{1,2})\s*דקות/);if(dm)return Math.max(60,Math.min(600,+dm[1]*60));return /דקה/.test(txt)?60:0}
 function attachTimer(txt,opt={}){const sec=opt.sec||timerSeconds(txt);if(!sec)return;const box=document.createElement("div"),out=document.createElement("div");box.className="timer-box";out.className="timer-display";out.textContent="";const start=()=>{if(S.timer)return;let left=sec;out.textContent=left;Audio.play("tap");S.timer={id:setInterval(()=>{left--;out.textContent=left>0?left:"נגמר";if(left<=0){clearTimer();Audio.play("bad")}},1000)}};if(opt.auto){const note=document.createElement("div");note.className="timer-btn";note.textContent="⏱️ הטיימר רץ";box.appendChild(note);box.appendChild(out);$("mx").appendChild(box);start();return}const btn=document.createElement("button");btn.className="timer-btn";btn.type="button";btn.textContent="▶️ התחל";btn.onclick=()=>{start();btn.disabled=true};box.appendChild(btn);box.appendChild(out);$("mx").appendChild(box)}
 function attachEmojiPicker(txt){if(!/3\s*אימוג/.test(String(txt))||!/תאר/.test(String(txt)))return;const box=document.createElement("div"),picked=document.createElement("div"),grid=document.createElement("div"),chosen=[];box.className="emoji-task";picked.className="emoji-picked";picked.textContent="בחרו 3 אימוג׳ים";grid.className="emoji-mini";EM.forEach(e=>{const b=document.createElement("button");b.type="button";b.textContent=e;b.onclick=()=>{const i=chosen.indexOf(e);if(i>=0){chosen.splice(i,1);b.classList.remove("sel")}else if(chosen.length<3){chosen.push(e);b.classList.add("sel")}picked.textContent=chosen.length?chosen.join(" "):"בחרו 3 אימוג׳ים"};grid.appendChild(b)});box.appendChild(picked);box.appendChild(grid);$("mx").appendChild(box)}
 function toast(t,ms=1500,cls=""){const e=document.createElement("div");e.className="toast"+(cls?(" "+cls):"");e.textContent=t;$("toasts").appendChild(e);setTimeout(()=>{e.style.opacity="0";e.style.transform="translateY(8px)";setTimeout(()=>e.remove(),220)},ms)}
-function pop(i,t,x,actions,adv,opt={}){clearTimer();S.advance=adv;S.modalVersion++;$("mi").textContent=i||"";$("mt").textContent=t||"";$("mx").innerHTML=(x||"").replaceAll("\n","<br>");if(opt.timerSec)attachTimer("",{sec:opt.timerSec,auto:!!opt.autoTimer});if(opt.inlineTimer)attachTimer(x);attachEmojiPicker(x);const ma=$("ma");ma.innerHTML="";ma.style.gridTemplateColumns=actions.length===1?"1fr":"repeat("+Math.min(actions.length,2)+",1fr)";actions.forEach((a,j)=>{const b=document.createElement("button");b.className="mb"+(a.kindClass?(" "+a.kindClass):"")+(j&&!a.kindClass?" alt":"");b.textContent=a.t;b.onclick=()=>act(a.k,S.modalVersion);ma.appendChild(b)});modal.classList.add("show")}
-function closeModal(){clearTimer();if(modal.classList.contains("show"))S.modalVersion++;modal.classList.remove("show");S.actor=null;requestAnimationFrame(()=>{if(!S.over)updateMoveButtons()})}
+function pop(i,t,x,actions,adv,opt={}){clearTimer();S.advance=adv;S.modalVersion++;S.modalState={i,t,x,actions:actions.map(a=>({t:a.t,k:a.k,kindClass:a.kindClass||""})),adv,opt:{timerSec:opt.timerSec||0,autoTimer:!!opt.autoTimer,inlineTimer:!!opt.inlineTimer}};$("mi").textContent=i||"";$("mt").textContent=t||"";$("mx").innerHTML=(x||"").replaceAll("\n","<br>");if(opt.timerSec)attachTimer("",{sec:opt.timerSec,auto:!!opt.autoTimer});if(opt.inlineTimer)attachTimer(x);attachEmojiPicker(x);const ma=$("ma");ma.innerHTML="";ma.style.gridTemplateColumns=actions.length===1?"1fr":"repeat("+Math.min(actions.length,2)+",1fr)";actions.forEach((a,j)=>{const b=document.createElement("button");b.className="mb"+(a.kindClass?(" "+a.kindClass):"")+(j&&!a.kindClass?" alt":"");b.textContent=a.t;b.onclick=()=>act(a.k,S.modalVersion);ma.appendChild(b)});modal.classList.add("show");saveGame()}
+function closeModal(){clearTimer();if(modal.classList.contains("show"))S.modalVersion++;modal.classList.remove("show");S.actor=null;S.modalState=null;saveGame();requestAnimationFrame(()=>{if(!S.over&&S.players.length)updateMoveButtons()})}
 function wait(ms){return new Promise(r=>setTimeout(r,ms))}
 function actorIndex(){return S.actor??(S.manualMove?S.manualMove.player:S.cur)}
 function fmt(txt,idx=actorIndex()){const a=S.players[idx],b=S.players[1-idx],w=W[a.gender]||W.f;let x=String(txt).replaceAll("{actor}",a.name).replaceAll("{target}",b.name);Object.keys(w).forEach(k=>x=x.replaceAll("{"+k+"}",w[k]));return x}
@@ -368,47 +393,40 @@ function pickNoRepeat(cat){const arr=DB[cat],h=S.history[cat],cand=arr.filter(x=
 function mkEmoji(id,n){EM.forEach(v=>{const b=document.createElement("button");b.className="emoji"+((n===1?S.e1:S.e2)===v?" sel":"");b.textContent=v;b.onclick=()=>{if(n===1)S.e1=v;else S.e2=v;[...$(id).children].forEach(x=>x.classList.remove("sel"));b.classList.add("sel")};$(id).appendChild(b)})}
 mkEmoji("e1",1);mkEmoji("e2",2);
 function showLastWinner(){try{const w=localStorage.getItem("boomLastWinner"),el=$("lastWinner");if(w&&el){el.textContent=`ניצחון במשחק הקודם: ${w} 🏆`;el.style.display="block"}}catch(_e){}}
+function showSetup(){ $("startWelcome").classList.add("hide");$("startSetup").classList.remove("hide") }
+function drinkModeLabel(mode=S.drinkMode){return mode==="wild"?"Wild Drinking":mode==="light"?"Light Drinking":"No Drinking"}
+function showSavedPrompt(){if(readSavedGame())pop("💾","נמצא משחק קודם","האם להמשיך?",[{t:"Continue",k:"continueSaved",kindClass:"good"},{t:"Start New Game",k:"discardSaved",kindClass:"alt"}],false)}
 showLastWinner();
+setTimeout(showSavedPrompt,80);
 function path(){let r=START[0],c=START[1],p=[[r,c]];while(r!==GOAL[0]||c!==GOAL[1]){if(r>0&&c>0){Math.random()<.56?r--:c--}else if(r>0)r--;else c--;p.push([r,c])}return p}
 function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
-function pickType(r,c,safe){if((r===START[0]&&c===START[1])||(r===GOAL[0]&&c===GOAL[1]))return"empty";const drink=S.drink&&Math.random()<.13;if(drink)return"drink";const x=Math.random();if(safe){if(x<.12)return"empty";if(x<.32)return"kiss";if(x<.54)return"task";if(x<.74)return"question";if(x<.9)return"temptation";return"duel"}if(x<.14)return"empty";if(x<.34)return"kiss";if(x<.57)return"task";if(x<.75)return"question";if(x<.91)return"temptation";return"duel"}
 function paint(c){const n=c.el;n.className="cell"+(c.reveal?" seen "+c.type:"");if(c.r===START[0]&&c.c===START[1])n.classList.add("start");if(c.r===GOAL[0]&&c.c===GOAL[1])n.classList.add("goal");n.innerHTML="";if(c.r===START[0]&&c.c===START[1])n.innerHTML+='<span class="badge">START</span>';if(c.r===GOAL[0]&&c.c===GOAL[1])n.innerHTML+='<span class="badge">🏆</span><span class="icon">'+IC.goal+"</span>";else if(c.reveal&&c.type!=="bomb")n.innerHTML+='<span class="icon">'+IC[c.type]+"</span>";else if(c.reveal&&c.type==="bomb"&&S.debug)n.innerHTML+='<span class="icon">'+IC.bomb+"</span>"}
-function tuneBoardTypes(){
-  const playable=[];let duels=[];
-  for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++){
-    const cell=S.board[r][c];
-    if((r===START[0]&&c===START[1])||(r===GOAL[0]&&c===GOAL[1])||cell.type==="bomb")continue;
-    playable.push(cell);
-    if(cell.type==="duel")duels.push(cell);
-  }
-  while(duels.length>6){const cell=duels.pop();cell.type=Math.random()<.5?"task":"temptation"}
-  const ensureDrinkTiles=()=>{
-    if(!S.drink)return;
-    let drinks=playable.filter(x=>x.type==="drink").length;
-    while(drinks<3){
-      const choices=playable.filter(x=>x.type!=="drink"&&x.type!=="empty");
-      if(!choices.length)break;
-      choices[Math.floor(Math.random()*choices.length)].type="drink";
-      drinks++;
-    }
-  };
-  ensureDrinkTiles();
-  let empty=playable.filter(x=>x.type==="empty").length;
-  while(empty<5&&playable.length){
-    const choices=playable.filter(x=>x.type!=="empty"&&x.type!=="drink");
-    if(!choices.length)break;
-    choices[Math.floor(Math.random()*choices.length)].type="empty";
-    empty++;
-  }
-  for(let r=0;r<ROWS;r++){
-    for(let c=2;c<COLS;c++){
-      const a=S.board[r][c-2],b=S.board[r][c-1],cell=S.board[r][c];
-      if(cell.type!=="bomb"&&cell.type!=="empty"&&a.type===cell.type&&b.type===cell.type)cell.type=S.drink&&cell.type==="drink"?"task":"empty";
-    }
-  }
-  ensureDrinkTiles();
+function makeBoardCell(r,c,type="empty",reveal=false){const el=document.createElement("div");el.className="cell";if(r===START[0]&&c===START[1])el.classList.add("start");if(r===GOAL[0]&&c===GOAL[1])el.classList.add("goal");board.appendChild(el);const cell={r,c,type,reveal,el};S.board[r][c]=cell;const s=document.createElement("div");s.dataset.r=r;s.dataset.c=c;layer.appendChild(s);return cell}
+function boardTypeBag(drinkMode){
+  const drinkCount=DRINK_COUNTS[drinkMode]??0,duels=4+(Math.random()<.5?1:0),risks=3+(Math.random()<.5?1:0);
+  const bag=[...Array(12).fill("bomb"),...Array(6).fill("empty"),...Array(duels).fill("duel"),...Array(risks).fill("temptation"),...Array(drinkCount).fill("drink")];
+  const remaining=(ROWS*COLS-2)-bag.length,base=Math.floor(remaining/3),extra=remaining%3,cats=shuffle(["question","task","kiss"]);
+  ["question","task","kiss"].forEach(cat=>bag.push(...Array(base).fill(cat)));
+  for(let i=0;i<extra;i++)bag.push(cats[i]);
+  return shuffle(bag)
 }
-function buildBoard(){board.innerHTML="";layer.innerHTML="";S.board=[];const safe=new Set(path().map(p=>p.join(","))),bombCandidates=[];for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++){const key=`${r},${c}`;if((r===START[0]&&c===START[1])||(r===GOAL[0]&&c===GOAL[1])||safe.has(key))continue;bombCandidates.push(key)}const bombSet=new Set(shuffle(bombCandidates).slice(0,12));for(let r=0;r<ROWS;r++){S.board[r]=[];for(let c=0;c<COLS;c++){const el=document.createElement("div");el.className="cell";if(r===START[0]&&c===START[1])el.classList.add("start");if(r===GOAL[0]&&c===GOAL[1])el.classList.add("goal");board.appendChild(el);const key=`${r},${c}`,cell={r,c,type:bombSet.has(key)?"bomb":pickType(r,c,safe.has(key)),reveal:false,el};S.board[r][c]=cell;const s=document.createElement("div");s.dataset.r=r;s.dataset.c=c;layer.appendChild(s)}}tuneBoardTypes();for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++)paint(S.board[r][c])}
+function buildBoard(){
+  board.innerHTML="";layer.innerHTML="";S.board=[];for(let r=0;r<ROWS;r++)S.board[r]=[];
+  const safe=new Set(path().map(p=>p.join(","))),playable=[],bombCandidates=[];
+  for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++){const key=`${r},${c}`;if((r===START[0]&&c===START[1])||(r===GOAL[0]&&c===GOAL[1]))continue;playable.push(key);if(!safe.has(key))bombCandidates.push(key)}
+  const bombSet=new Set(shuffle(bombCandidates).slice(0,12));
+  const bag=boardTypeBag(S.drinkMode).filter(x=>x!=="bomb");
+  const nonBomb=shuffle(playable.filter(key=>!bombSet.has(key)));
+  const typeByKey={};bombSet.forEach(key=>typeByKey[key]="bomb");nonBomb.forEach((key,i)=>typeByKey[key]=bag[i]||"question");
+  for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++){const key=`${r},${c}`,type=(r===START[0]&&c===START[1])||(r===GOAL[0]&&c===GOAL[1])?"empty":typeByKey[key];makeBoardCell(r,c,type,false)}
+  for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++)paint(S.board[r][c])
+}
+function buildBoardFromSnapshot(snap){
+  if(!Array.isArray(snap)||snap.length!==ROWS||snap.some(row=>!Array.isArray(row)||row.length!==COLS))return false;
+  board.innerHTML="";layer.innerHTML="";S.board=[];for(let r=0;r<ROWS;r++){S.board[r]=[];for(let c=0;c<COLS;c++){const saved=snap[r][c]||{};makeBoardCell(r,c,saved.type||"empty",!!saved.reveal)}}
+  for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++)paint(S.board[r][c]);
+  return true
+}
 function slotPos(r,c){const s=[...layer.children].find(x=>+x.dataset.r===r&&+x.dataset.c===c),a=layer.getBoundingClientRect(),b=s.getBoundingClientRect();return{x:b.left-a.left+b.width/2,y:b.top-a.top+b.height/2}}
 function placeTokens(){[0,1].forEach(i=>{const t=$("t"+i),p=S.players[i],o=slotPos(p.pos[0],p.pos[1]);t.style.left=o.x+"px";t.style.top=o.y+"px";t.textContent=p.emoji});stackTokens()}
 function stackTokens(){const same=S.players[0].pos.join(",")===S.players[1].pos.join(",");$("t0").style.marginLeft=same?"-10px":"0";$("t1").style.marginLeft=same?"10px":"0"}
@@ -418,15 +436,15 @@ function updateEffects(){[0,1].forEach(i=>{$("fx"+i).textContent=S.manualMove&&S
 function ui(){const active=actorIndex();S.players.forEach((p,i)=>{$("pe"+i).textContent=p.emoji;$("pn"+i).textContent=p.name;$("pw"+i).textContent=p.wins||0;$("pc"+i).classList.toggle("a",i===active)});const t=$("turn");t.classList.toggle("endgame",isEndgame());t.textContent=S.manualMove?`${S.players[active].emoji} ${S.players[active].name} • ${S.manualMove.label}`:`תור ${S.turn} • ${S.players[S.cur].emoji} ${S.players[S.cur].name}`;board.classList.toggle("endgame",isEndgame());updateEffects();updateMoveButtons();if(isEndgame()&&!S.endgameShown){S.endgameShown=true;Audio.play("bad");toast("🔥 מצב סיום: הלחץ עולה!",1700,"danger")}}
 function canMove(i,dr,dc){const p=S.players[i],nr=p.pos[0]+dr,nc=p.pos[1]+dc;if(nr<0||nr>=ROWS||nc<0||nc>=COLS)return false;if(S.manualMove&&S.manualMove.kind==="back"){const now=Math.abs(p.pos[0]-GOAL[0])+Math.abs(p.pos[1]-GOAL[1]),next=Math.abs(nr-GOAL[0])+Math.abs(nc-GOAL[1]);return next>now}return true}
 function hasManualMoves(){if(!S.manualMove)return true;const i=S.manualMove.player;return canMove(i,-1,0)||canMove(i,1,0)||canMove(i,0,-1)||canMove(i,0,1)}
-function updateMoveButtons(){const i=S.manualMove?S.manualMove.player:S.cur,p=S.players[i],lock=S.busy||S.over||modal.classList.contains("show");$("u").textContent="↑";$("d").textContent="↓";$("l").textContent="←";$("r").textContent="→";$("u").disabled=!(canMove(i,-1,0)&&!lock);$("d").disabled=!(canMove(i,1,0)&&!lock);$("l").disabled=!(canMove(i,0,-1)&&!lock);$("r").disabled=!(canMove(i,0,1)&&!lock)}
+function updateMoveButtons(){if(!S.players.length)return;const i=S.manualMove?S.manualMove.player:S.cur,lock=S.busy||S.over||modal.classList.contains("show");$("u").textContent="↑";$("d").textContent="↓";$("l").textContent="←";$("r").textContent="→";$("u").disabled=!(canMove(i,-1,0)&&!lock);$("d").disabled=!(canMove(i,1,0)&&!lock);$("l").disabled=!(canMove(i,0,-1)&&!lock);$("r").disabled=!(canMove(i,0,1)&&!lock)}
 function pulseToken(i){const t=$("t"+i);t.classList.add("land");setTimeout(()=>t.classList.remove("land"),160)}
 async function animateToken(i,r,c){const o=slotPos(r,c),t=$("t"+i);t.style.left=o.x+"px";t.style.top=o.y+"px";await wait(280);pulseToken(i)}
 function checkVictory(i){const p=S.players[i];if(p.pos[0]===GOAL[0]&&p.pos[1]===GOAL[1]){S.over=true;winScreen(p);return true}return false}
 async function moveToCoord(i,r,c){const t=$("t"+i);t.classList.add("warp");await wait(90);S.players[i].pos=[r,c];await animateToken(i,r,c);await wait(60);t.classList.remove("warp");stackTokens();checkVictory(i)}
-function startManualMove(player,steps,kind,msg){S.manualMove={player,remaining:steps,kind,label:kind==="back"?`${stepText(steps)} אחורה`:manualStepText(steps)};S.actor=null;closeModal();S.busy=false;toast(msg,1800,"warn");if(!hasManualMoves()){toast("אין צעדים זמינים — ממשיכים",1000);S.manualMove=null;nextTurn();return}ui()}
+function startManualMove(player,steps,kind,msg){S.manualMove={player,remaining:steps,kind,label:kind==="back"?`${stepText(steps)} אחורה`:manualStepText(steps)};S.actor=null;closeModal();S.busy=false;toast(msg,1800,"warn");if(!hasManualMoves()){toast("אין צעדים זמינים — ממשיכים",1000);S.manualMove=null;nextTurn();return}ui();saveGame()}
 async function bombHit(i=actorIndex()){S.manualMove=null;S.stats.bombs++;if(navigator.vibrate)navigator.vibrate([80,70,120]);Audio.play("bomb");board.classList.add("shake");setTimeout(()=>board.classList.remove("shake"),450);await moveToCoord(i,START[0],START[1]);
-toast("💥 בום! חזרה להתחלה",1300,"danger");
-card("💥","בום!",pickText("bomb",i));
+toast("💥 בום! חזרה להתחלה",1100,"danger");
+if(!S.over)nextTurn();else updateMoveButtons();
 }
 
 async function tileRevealFlow(cell,actor=S.cur){
@@ -462,36 +480,39 @@ async function resolveCell(cell){
   if(cell.type==="kiss"){card("💋","אינטימיות",fmt(pickNoRepeat("kiss")));return}
   if(cell.type==="task"){card("🎯","אתגר",fmt(pickNoRepeat("task")));return}
   if(cell.type==="question"){card("❔","שאלה",fmt(pickNoRepeat("question")));return}
-  if(cell.type==="drink"){card("🥂","שתייה",fmt(pickNoRepeat("drink")));return}
+  if(cell.type==="drink"){S.stats.drinks++;toast(fmt(pickNoRepeat("drink")),1400,"warn");await wait(1050);nextTurn();return}
   if(cell.type==="duel"){startDuel();return}
   if(cell.type==="temptation"){startTemptation();return}
-  if(cell.type==="empty"){pop("","קובייה ריקה","לא קרה כלום... ממשיכים",[{t:"ממשיכים",k:"done"}],true);return}
+  if(cell.type==="empty"){S.stats.empty++;toast("⬜ קובייה ריקה\nלא קרה כלום...",1000);await wait(950);nextTurn();return}
 }
 function card(i,t,x){const player=actorIndex(),sec=timerSeconds(x);if(sec){S.pending={k:"timed_intro",i,t,x,player,sec};S.actor=player;pop("⏳","אתגר זמן",timedIntroText(player),[{t:"התחל",k:"timedStart"}],false);return}pop(i,t,x,[{t:"בוצע",k:"done"}],true)}
 function showTimedChallenge(x){S.pending={k:"timed_active",i:x.i,t:x.t,x:x.x,player:x.player,sec:x.sec};S.actor=x.player;pop(x.i,x.t,x.x,[{t:"בוצע",k:"timedDone",kindClass:"good"},{t:"לא הצלחתי",k:"timedFail",kindClass:"bad"}],true,{timerSec:x.sec,autoTimer:true})}
 function distToGoal(pos){return Math.abs(pos[0]-GOAL[0])+Math.abs(pos[1]-GOAL[1])}
 function findBackStep(i){const p=S.players[i].pos,now=distToGoal(p),dirs=[[1,0],[0,1],[-1,0],[0,-1]];for(const [dr,dc] of dirs){const nr=p[0]+dr,nc=p[1]+dc;if(nr>=0&&nr<ROWS&&nc>=0&&nc<COLS&&distToGoal([nr,nc])>now)return[nr,nc]}return null}
 async function penaltyBackOne(player,msg){S.manualMove=null;S.busy=true;closeModal();updateMoveButtons();const step=findBackStep(player),w=W[S.players[player].gender]||W.f;if(step){S.players[player].pos=[step[0],step[1]];await animateToken(player,step[0],step[1]);stackTokens();toast(msg||`${S.players[player].name} ${w.return} צעד אחד בלי להפעיל קובייה`,1400,"danger")}else toast("אין קובייה אחורה — ממשיכים",1200,"warn");S.busy=false;if(!S.over)nextTurn();else updateMoveButtons()}
-function startTemptation(){S.stats.risks++;const t=pickNoRepeat("tempt"),player=actorIndex();S.pending={k:"tempt",d:t,player};const timed=timerSeconds(t.c)>0;pop("❓","הימור",`${S.players[player].name}, רוצה לקחת סיכון?\n\nהצלחה: ${fmt(t.win,player)}\nכישלון: ${fmt(t.lose,player)}${timed?"\n\nהמשימה עצמה תופיע רק אחרי לחיצה על התחלה.":`\n\n${fmt(t.c,player)}`}`,[{t:"לקחת סיכון",k:"risk",kindClass:"bad"},{t:"לא לקחת סיכון",k:"safe",kindClass:"alt"}],true)}
+function startTemptation(){S.stats.risks++;const t=pickNoRepeat("tempt"),player=actorIndex();S.pending={k:"tempt",d:t,player};const timed=timerSeconds(t.c)>0;pop("❓","אתגר סיכון",`${S.players[player].name}, רוצה לקחת סיכון?\n\nהצלחה: +1 צעד\nכישלון: -1 צעד${timed?"\n\nהמשימה עצמה תופיע רק אחרי לחיצה על התחלה.":`\n\n${fmt(t.c,player)}`}`,[{t:"לקחת סיכון",k:"risk",kindClass:"bad"},{t:"לא לקחת סיכון",k:"safe",kindClass:"alt"}],true)}
 function startDuel(){S.stats.duels++;const d=pickNoRepeat("duel"),player=actorIndex();S.pending={k:"duel_intro",d,player};pop("⚔️","דו־קרב","תופיע משימה אמיתית לביצוע מחוץ למסך.\n\nשני השחקנים מבצעים את המשימה בעולם האמיתי.\n\nהשחקן הראשון שמצליח להשלים אותה מנצח.\n\nאחרי שהמשימה הסתיימה, בחרו למטה מי ניצח.",[{t:"התחל דו־קרב",k:"duelStart"}],false)}
 function showDuelChallenge(x){S.pending={k:"duel_result",d:x.d,player:x.player};const sec=timerSeconds(x.d);pop("⚔️","דו־קרב",`${fmt(x.d,x.player)}\n\nהראשון שמצליח לבצע את המשימה מנצח`,[{t:wonText(0),k:"duelWin0",kindClass:"good"},{t:wonText(1),k:"duelWin1",kindClass:"good"}],false,sec?{timerSec:sec,autoTimer:true}:{})}
-function openSuccessFail(){clearTimer();const player=S.pending?.player??actorIndex();$("mt").textContent="תוצאת ההימור";$("mx").textContent=`${S.players[player].name}, מה הייתה התוצאה?`;const ma=$("ma");ma.innerHTML="";ma.style.gridTemplateColumns="1fr 1fr";const s=document.createElement("button"),f=document.createElement("button");s.className="mb good";f.className="mb bad";s.textContent="הצלחתי";f.textContent="לא הצלחתי";s.onclick=()=>act("succ",S.modalVersion);f.onclick=()=>act("fail",S.modalVersion);ma.appendChild(s);ma.appendChild(f)}
-function applyTemptOutcome(x,success){const player=x.player,txt=success?fmt(x.d.win,player):fmt(x.d.lose,player),steps=success?(txt.includes("+3")?3:2):(txt.includes("צעד אחד")?1:2),kind=success?"forward":"back",w=W[S.players[player].gender]||W.f;startManualMove(player,steps,kind,`${success?"ההימור הצליח":"ההימור נכשל"}: ${txt}. ${w.choose} ${manualStepText(steps)}.`)}
+function openSuccessFail(){clearTimer();const player=S.pending?.player??actorIndex(),x=`${S.players[player].name}, מה הייתה התוצאה?`;S.modalState={i:"❓",t:"תוצאת אתגר הסיכון",x,actions:[{t:"הצלחתי",k:"succ",kindClass:"good"},{t:"לא הצלחתי",k:"fail",kindClass:"bad"}],adv:false,opt:{}};$("mi").textContent="❓";$("mt").textContent="תוצאת אתגר הסיכון";$("mx").textContent=x;const ma=$("ma");ma.innerHTML="";ma.style.gridTemplateColumns="1fr 1fr";const s=document.createElement("button"),f=document.createElement("button");s.className="mb good";f.className="mb bad";s.textContent="הצלחתי";f.textContent="לא הצלחתי";s.onclick=()=>act("succ",S.modalVersion);f.onclick=()=>act("fail",S.modalVersion);ma.appendChild(s);ma.appendChild(f);saveGame()}
+function applyTemptOutcome(x,success){const player=x.player,steps=1,kind=success?"forward":"back",w=W[S.players[player].gender]||W.f;startManualMove(player,steps,kind,`${success?"אתגר הסיכון הצליח: +1 צעד":"אתגר הסיכון נכשל: -1 צעד"}. ${w.choose} ${manualStepText(steps)}.`)}
 function microTitle(){const a=S.stats.bombs<3?"שורדי הפצצות":"מכורי הסיכון",b=S.stats.duels>6?"אלופי הדו-קרב":"כוכבי הפלרטוט";return`${a} • ${b}`}
 function confetti(){const f=$("confetti");f.innerHTML="";for(let i=0;i<110;i++){const d=document.createElement("div");d.className="c";d.style.left=Math.random()*100+"vw";d.style.background=["#ff2f7d","#ffd166","#46a3ff","#8cff8c","#fff"][Math.floor(Math.random()*5)];d.style.animationDelay=(Math.random()*.5)+"s";f.appendChild(d)}setTimeout(()=>f.innerHTML="",2500)}
 function winScreen(w){
   const idx=Math.max(0,S.players.indexOf(w));
   const rec=recordWin(w.name);
   w.wins=rec.total;
+  clearSavedGame();
   try{localStorage.setItem("boomLastWinner",w.name)}catch(_e){}
   const funny = pickText("victory",idx);
-  const stats = `<div class="stats"><div class="stat">תורים: ${S.turn}</div><div class="stat">פצצות: ${S.stats.bombs}</div><div class="stat">דו־קרבות: ${S.stats.duels}</div><div class="stat">הימורים: ${S.stats.risks}</div></div>`;
+  const title=microTitle();
+  recordHistory(w,title);
+  const stats = `<div class="stats"><div class="stat">תורים: ${S.turn}</div><div class="stat">פצצות: ${S.stats.bombs}</div><div class="stat">דו־קרבות: ${S.stats.duels}</div><div class="stat">סיכונים: ${S.stats.risks}</div><div class="stat">שתייה: ${S.stats.drinks||0}</div><div class="stat">ריקות: ${S.stats.empty||0}</div></div>`;
 
   pop(
     "",
     `ניצחון גדול!`,
-    `<div class="trophy-big">🏆</div>${wonText(idx)}<br>ניצחונות קודמים: ${rec.prev}<br>תואר זוגי: ${microTitle()}<br>${funny}${stats}`,
-    [{t:"שחקו שוב",k:"restart"}],
+    `<div class="trophy-big">🏆</div>${w.name}<br>ניצחונות לכל החיים: ${rec.total}<br>תואר: ${title}<br>${funny}${stats}`,
+    [{t:"Send Feedback",k:"feedback"},{t:"New Game",k:"newGame"}],
     false
   );
 
@@ -517,7 +538,7 @@ async function resolvePending(k){
   if(x.k==="tempt_timed_intro"&&k==="timedStart"){
     S.pending={k:"tempt_timed_active",d:x.d,player:x.player,sec:x.sec};
     S.actor=x.player;
-    pop("❓","הימור בזמן",`${fmt(x.d.c,x.player)}\n\nהצלחה: ${fmt(x.d.win,x.player)}\nלא הצלחת? ${fmt(x.d.lose,x.player)}`,[{t:"הצלחתי",k:"succ",kindClass:"good"},{t:"לא הצלחתי",k:"timedFail",kindClass:"bad"}],false,{timerSec:x.sec,autoTimer:true});
+    pop("❓","אתגר סיכון בזמן",`${fmt(x.d.c,x.player)}\n\nהצלחה: +1 צעד\nלא הצלחת? -1 צעד`,[{t:"הצלחתי",k:"succ",kindClass:"good"},{t:"לא הצלחתי",k:"timedFail",kindClass:"bad"}],false,{timerSec:x.sec,autoTimer:true});
     return true
   }
   if(x.k==="tempt_timed_active"){
@@ -541,16 +562,34 @@ async function resolvePending(k){
   }
   return false
 }
+function sendFeedback(){try{location.href=FEEDBACK_URL}catch(_e){toast("אפשר לשלוח פידבק ל-feedback@example.com",1500,"warn")}}
+function showHowToPlay(){
+  pop("ℹ️","How to Play","💣 Bomb = return to start\n🎯 Task = perform the task\n❔ Question = answer the question\n⚔️ Duel = winner gets 1 bonus step\n❓ Risk Challenge = success = +1 step, failure = -1 step\n🥂 Drink = follow the drinking instruction\n⬜ Empty = nothing happens\n🏆 Trophy = win the game",[{t:"Return to Game",k:"resume"}],false)
+}
+function showSymbols(){
+  pop("🧭","Board Symbols Explanation",`START = נקודת התחלה\n🏆 = גביע וניצחון\n💣 = פצצה וחזרה להתחלה\n💋 = אינטימיות\n🎯 = משימה\n❔ = שאלה\n❓ = אתגר סיכון\n⚔️ = דו־קרב\n🥂 = שתייה במצבי Light/Wild Drinking\n⬜ = קובייה ריקה`,[{t:"Return to Game",k:"resume"}],false)
+}
+function showLeaderboard(){
+  const rows=leaderboardEntries(),html=rows.length?rows.slice(0,10).map((x,i)=>`${i+1}. ${x.name} — ${x.wins}`).join("\n"):"עדיין אין ניצחונות שמורים.";
+  pop("🏆","Leaderboard",html,[{t:"Return to Game",k:"resume"}],false)
+}
+function showGameHistory(){
+  const rows=readHistory(),html=rows.length?rows.slice(0,8).map(x=>`${x.date} — ניצחון של ${x.winner} ב-${x.turn} תורים (${x.title||"ללא תואר"})`).join("\n"):"עדיין אין היסטוריית משחקים.";
+  pop("📜","Game History",html,[{t:"Return to Game",k:"resume"}],false)
+}
 async function applyModalAction(k,v){
   if(v!==S.modalVersion)return;
-  if(k==="restart"){location.reload();return}
+  if(k==="restart"){clearSavedGame();location.reload();return}
+  if(k==="continueSaved"){if(!restoreSavedGame())toast("לא ניתן לטעון את המשחק השמור",1400,"danger");return}
+  if(k==="discardSaved"){clearSavedGame();closeModal();return}
   if(k==="mute"){Audio.setMuted(!Audio.muted);toast(Audio.muted?"🔇 סאונד הושתק":"🔈 סאונד הופעל",900);closeModal();S.busy=false;updateMoveButtons();return}
   if(k==="resetWins"){resetWins();toast("סטטיסטיקת הניצחונות אופסה",1200,"warn");closeModal();S.busy=false;updateMoveButtons();return}
-  if(k==="help"){
-    pop("ℹ️","עזרה","מטרה: להגיע ראשונים לגביע.\n💋 אינטימיות\n🎯 משימה\n❔ שאלה\n❓ הימור\n⚔️ דו־קרב: קודם מתחילים, אחר כך מופיעה משימה על זמן. המנצח מקבל צעד פרס אחד בלבד.\n💣 פצצה מחזירה להתחלה ונשארת פעילה\nקובייה ריקה = לא קורה כלום\n\nבמשימה עם זמן הטיימר מתחיל רק אחרי מסך ההסבר. לחיצה על \"לא הצלחתי\" מחזירה צעד אחד בלי להפעיל את הקובייה שנוחתים עליה.",[{t:"חזרה",k:"resume"}],false);
-    return
-  }
-  if(k==="newGame"){location.reload();return}
+  if(k==="help"||k==="howToPlay"){showHowToPlay();return}
+  if(k==="symbols"){showSymbols();return}
+  if(k==="leaderboard"){showLeaderboard();return}
+  if(k==="gameHistory"){showGameHistory();return}
+  if(k==="feedback"){sendFeedback();if(S.over){[...$("ma").querySelectorAll("button")].forEach(b=>b.disabled=false);return}closeModal();S.busy=false;updateMoveButtons();return}
+  if(k==="newGame"){clearSavedGame();location.reload();return}
   if(k==="resume"){closeModal();S.busy=false;updateMoveButtons();return}
   let opened=false;
   if(S.pending)opened=await resolvePending(k);
@@ -592,22 +631,43 @@ async function moveTurn(dr,dc){
     if(cell.type==="bomb"){S.manualMove=null;await tileRevealFlow(cell,me);S.busy=false;ui();return}
     if(manual.remaining>0){
       S.busy=false;
-      if(!hasManualMoves()){toast("אין עוד צעדים זמינים — התנועה הסתיימה",1100);S.manualMove=null;nextTurn()}else ui();
+      if(!hasManualMoves()){toast("אין עוד צעדים זמינים — התנועה הסתיימה",1100);S.manualMove=null;nextTurn()}else{ui();saveGame()}
       return
     }
     S.manualMove=null;
     await tileRevealFlow(cell,me);
     S.busy=false;
-    ui();
+    ui();saveGame();
     return
   }
   await tileRevealFlow(cell,me);
   S.busy=false;
-  ui()
+  ui();saveGame()
 }
-function nextTurn(){S.cur=1-S.cur;S.turn++;ui()}
-function startGame(){if($("game").classList.contains("show"))return;const n1=$("n1").value.trim()||"שחקן א",n2=$("n2").value.trim()||"שחקן ב";S.players=[{name:n1,gender:$("g1").value,emoji:S.e1,pos:[...START],wins:getWins(n1)},{name:n2,gender:$("g2").value,emoji:S.e2,pos:[...START],wins:getWins(n2)}];S.cur=0;S.turn=1;S.busy=false;S.over=false;S.pending=null;S.advance=false;S.manualMove=null;S.actor=null;S.history={kiss:[],task:[],question:[],duel:[],tempt:[],drink:[]};S.stats={bombs:0,duels:0,risks:0};S.endgameShown=false;S.modalVersion=0;S.drink=$("drinkMode").checked;buildBoard();$("start").classList.remove("show");$("game").classList.add("show");ui();placeTokens();const drinkLine=S.drink?'\n🥂 שתייה — משימת שתייה קלילה במהלך המשחק':"";pop("💘","מתחילים",`💋 אינטימיות\n🎯 משימה\n❔ שאלה\n❓ הימור\n⚔️ דו־קרב\n💣 פצצה${drinkLine}\nקובייה ריקה = אין פעולה\n\nמשימות עם זמן ייפתחו במסך הסבר ורק אז הטיימר יתחיל. כל משימה היא הזמנה בלבד; אם לא מתאים לבצע משהו, לחצו על כפתור התוצאה המתאים והמשיכו.`,[{t:"הבנתי",k:"resume"}],false)}
-function openSettings(){if(S.busy){toast("רגע, פעולה עדיין מתבצעת",900,"warn");return}pop("⚙️","הגדרות","",[{t:Audio.muted?"הפעלת סאונד":"השתקת סאונד",k:"mute"},{t:"עזרה",k:"help"},{t:"איפוס סטטיסטיקת ניצחונות",k:"resetWins",kindClass:"bad"},{t:"משחק חדש",k:"newGame"},{t:"חזרה למשחק",k:"resume"}],false)}
+function nextTurn(){S.cur=1-S.cur;S.turn++;ui();saveGame()}
+function restoreSavedGame(data=readSavedGame()){
+  if(!data||!Array.isArray(data.players)||data.players.length!==2)return false;
+  clearTimer();modal.classList.remove("show");
+  S.players=data.players.map((p,i)=>({name:p.name||`שחקן ${i+1}`,gender:p.gender==="m"?"m":"f",emoji:p.emoji||EM[i],pos:Array.isArray(p.pos)?p.pos:[...START],wins:getWins(p.name)}));
+  S.cur=data.cur===1?1:0;S.turn=Math.max(1,+data.turn||1);S.busy=false;S.over=false;S.pending=data.pending||null;S.advance=!!data.advance;S.manualMove=data.manualMove||null;S.actor=Number.isInteger(data.actor)?data.actor:null;S.history=data.history||{kiss:[],task:[],question:[],duel:[],tempt:[],drink:[]};S.endgameShown=!!data.endgameShown;S.modalVersion=0;S.drinkMode=data.drinkMode||"none";S.drink=S.drinkMode!=="none";S.stats=Object.assign({bombs:0,duels:0,risks:0,drinks:0,empty:0},data.stats||{});S.modalState=null;
+  if(!buildBoardFromSnapshot(data.board)){clearSavedGame();return false}
+  $("start").classList.remove("show");$("game").classList.add("show");ui();placeTokens();renderDebug();
+  const m=data.modalState;
+  if(m&&Array.isArray(m.actions)&&m.actions.length)pop(m.i,m.t,m.x,m.actions,m.adv,m.opt||{});else toast("המשחק שוחזר",1000,"warn");
+  saveGame();
+  return true
+}
+function startGame(){
+  if($("game").classList.contains("show"))return;
+  clearSavedGame();
+  const n1=$("n1").value.trim()||"שחקן א",n2=$("n2").value.trim()||"שחקן ב";
+  S.players=[{name:n1,gender:$("g1").value,emoji:S.e1,pos:[...START],wins:getWins(n1)},{name:n2,gender:$("g2").value,emoji:S.e2,pos:[...START],wins:getWins(n2)}];
+  S.cur=0;S.turn=1;S.busy=false;S.over=false;S.pending=null;S.advance=false;S.manualMove=null;S.actor=null;S.history={kiss:[],task:[],question:[],duel:[],tempt:[],drink:[]};S.stats={bombs:0,duels:0,risks:0,drinks:0,empty:0};S.endgameShown=false;S.modalVersion=0;S.modalState=null;S.drinkMode=$("drinkMode").value||"none";S.drink=S.drinkMode!=="none";
+  buildBoard();$("start").classList.remove("show");$("game").classList.add("show");ui();placeTokens();
+  const drinkLine=S.drink?`\n🥂 שתייה — ${drinkModeLabel()} (${DRINK_COUNTS[S.drinkMode]} קוביות)`: "";
+  pop("💘","מתחילים",`💋 אינטימיות\n🎯 משימה\n❔ שאלה\n❓ אתגר סיכון\n⚔️ דו־קרב\n💣 פצצה${drinkLine}\n⬜ קובייה ריקה\n\nמשימות עם זמן ייפתחו במסך הסבר ורק אז הטיימר יתחיל. כל משימה היא הזמנה בלבד; אם לא מתאים לבצע משהו, לחצו על כפתור התוצאה המתאים והמשיכו.`,[{t:"הבנתי",k:"resume"}],false)
+}
+function openSettings(){if(S.busy){toast("רגע, פעולה עדיין מתבצעת",900,"warn");return}pop("⚙️","הגדרות","",[{t:"How to Play",k:"howToPlay"},{t:"Board Symbols Explanation",k:"symbols"},{t:"Leaderboard",k:"leaderboard"},{t:"Game History",k:"gameHistory"},{t:"Send Feedback",k:"feedback"},{t:"Reset Wins",k:"resetWins",kindClass:"bad"},{t:"New Game",k:"newGame"},{t:"Return to Game",k:"resume"}],false)}
 function renderDebug(){
   const p=$("debugPanel");
   if(!p)return;
@@ -643,6 +703,7 @@ function debugMovePlayer(){
   placeTokens();
   if(checkVictory(i))return;
   ui();
+  saveGame();
   toast(`DEBUG: המיקום של ${S.players[i].name} עודכן ל-${r},${c}`,900,"warn")
 }
 $("gameTitle").addEventListener("pointerdown",debugTitleTap);
@@ -654,7 +715,7 @@ $("dbgEmpty").onclick=()=>debugSetForce("empty");
 $("dbgGoal").onclick=()=>debugSetForce("goal");
 $("dbgMove").onclick=debugMovePlayer;
 $("dbgReset").onclick=()=>{if(S.debug)location.reload()};
-$("startBtn").onclick=startGame;$("settingsBtn").onclick=openSettings;$("u").onclick=()=>moveTurn(-1,0);$("d").onclick=()=>moveTurn(1,0);$("l").onclick=()=>moveTurn(0,-1);$("r").onclick=()=>moveTurn(0,1);
+$("setupBtn").onclick=showSetup;$("startBtn").onclick=startGame;$("settingsBtn").onclick=openSettings;$("u").onclick=()=>moveTurn(-1,0);$("d").onclick=()=>moveTurn(1,0);$("l").onclick=()=>moveTurn(0,-1);$("r").onclick=()=>moveTurn(0,1);
 window.addEventListener("pointerdown",()=>Audio.ensure(),{once:true});
 async function act(k,v){if(v!==S.modalVersion)return;[...$("ma").querySelectorAll("button")].forEach(b=>b.disabled=true);try{await applyModalAction(k,v)}catch(e){console.error(e);toast("אירעה שגיאה בפעולה. נסו שוב.",1200,"danger");[...$("ma").querySelectorAll("button")].forEach(b=>b.disabled=false)}}
 </script>
