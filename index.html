@@ -14,18 +14,19 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:var(--bg);c
 button,input,select{font-family:inherit}
 .bg{position:fixed;inset:0;z-index:0;background:radial-gradient(circle at 18% 12%,rgba(255,47,125,.3),transparent 35%),radial-gradient(circle at 88% 82%,rgba(95,73,255,.24),transparent 42%),linear-gradient(160deg,var(--bg),var(--bg2) 66%,#07020a)}
 .screen{position:fixed;inset:0;display:none;z-index:2}.show{display:flex}
-#start{align-items:center;justify-content:center;padding:10px;overflow:auto}
-.card{width:min(100%,560px);border:1px solid var(--line);border-radius:24px;padding:14px;background:linear-gradient(165deg,rgba(255,255,255,.14),rgba(255,255,255,.05));backdrop-filter:blur(18px);box-shadow:0 22px 70px rgba(0,0,0,.55)}
-h1{margin:0 0 6px;text-align:center;font-size:clamp(34px,9vw,52px);font-weight:900;line-height:1.05;background:linear-gradient(120deg,#fff,var(--pink),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+#start{align-items:center;justify-content:center;padding:10px;overflow:auto;overflow-x:hidden}
+.card{width:calc(100vw - 32px);max-width:560px;min-width:0;margin-inline:auto;overflow:hidden;border:1px solid var(--line);border-radius:24px;padding:14px;background:linear-gradient(165deg,rgba(255,255,255,.14),rgba(255,255,255,.05));backdrop-filter:blur(18px);box-shadow:0 22px 70px rgba(0,0,0,.55)}
+h1{margin:0 0 6px;text-align:center;font-size:clamp(30px,8vw,52px);font-weight:900;line-height:1.05;background:linear-gradient(120deg,#fff,var(--pink),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 .lead{margin:0 0 10px;text-align:center;color:var(--muted);font-size:12.5px;line-height:1.45}
 .last-win{display:none;margin:0 0 9px;text-align:center;padding:7px 10px;border:1px solid rgba(255,209,102,.4);border-radius:13px;background:rgba(255,209,102,.1);color:#ffd166;font-size:12px;font-weight:900}
-.g2{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.g2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:7px}
+.g2>div{min-width:0}
 label{display:block;color:var(--muted);font-size:11px;font-weight:700;margin:6px 0 3px}
-input,select{width:100%;padding:9px;border-radius:11px;border:1px solid var(--line);background:rgba(255,255,255,.08);color:#fff}
+input,select{width:100%;min-width:0;padding:9px;border-radius:11px;border:1px solid var(--line);background:rgba(255,255,255,.08);color:#fff}
 .drink{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:10px;padding:9px 11px;border:1px solid var(--line);border-radius:13px;background:rgba(255,255,255,.07);color:var(--muted);font-size:12px;font-weight:900}
 .drink input{width:22px;height:22px;accent-color:var(--pink)}
-.eg{display:grid;grid-template-columns:repeat(4,1fr);gap:5px}
-.emoji{height:34px;border:1px solid var(--line);border-radius:9px;background:rgba(255,255,255,.08);color:#fff;font-size:19px}
+.eg{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:5px}
+.emoji{min-width:0;height:34px;border:1px solid var(--line);border-radius:9px;background:rgba(255,255,255,.08);color:#fff;font-size:19px}
 .emoji.sel{border-color:transparent;background:linear-gradient(130deg,var(--pink2),var(--pink))}
 .main{width:100%;margin-top:11px;border:none;border-radius:999px;padding:12px;color:#fff;font-weight:900;font-size:15px;background:linear-gradient(130deg,var(--pink2),var(--pink));box-shadow:0 12px 30px rgba(255,47,125,.35)}
 
@@ -36,8 +37,10 @@ input,select{width:100%;padding:9px;border-radius:11px;border:1px solid var(--li
 .set{width:34px;height:34px;border-radius:50%;border:1px solid rgba(255,47,125,.6);background:rgba(255,255,255,.1);color:#fff;font-size:17px}
 .title{text-align:center;font-weight:900;font-size:17px;text-shadow:0 0 14px rgba(255,47,125,.4)}
 .players{display:grid;grid-template-columns:1fr 26px 1fr;gap:6px;align-items:center}
-.pc{min-height:44px;border:1px solid var(--line);border-radius:14px;display:flex;justify-content:center;align-items:center;gap:6px;background:rgba(255,255,255,.08);font-weight:900;font-size:14px;position:relative;padding:4px 7px}
+.pc{min-height:44px;border:1px solid var(--line);border-radius:14px;display:flex;justify-content:center;align-items:center;gap:6px;background:rgba(255,255,255,.08);font-weight:900;font-size:14px;position:relative;padding:4px 7px;min-width:0}
 .pc.a{border-color:var(--pink);background:rgba(255,47,125,.16);box-shadow:0 0 18px rgba(255,47,125,.33)}
+.pname{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.wins{flex:0 0 auto;min-width:24px;padding:1px 6px;border-radius:999px;border:1px solid rgba(255,209,102,.45);background:rgba(255,209,102,.12);color:#ffd166;font-size:11px;line-height:1.35;text-align:center}
 .fx{position:absolute;bottom:2px;left:4px;display:flex;gap:3px;font-size:10px;opacity:.92}
 .turn{text-align:center;padding:4px 10px;border:1px solid rgba(255,47,125,.5);border-radius:999px;background:rgba(255,47,125,.16);font-weight:900;font-size:13px;position:relative;overflow:hidden}
 .turn.endgame{border-color:#ff4f68;background:rgba(255,79,104,.2);box-shadow:0 0 16px rgba(255,79,104,.25)}
@@ -85,14 +88,14 @@ input,select{width:100%;padding:9px;border-radius:11px;border:1px solid var(--li
 
 .modal{position:fixed;inset:0;z-index:20;display:none;align-items:center;justify-content:center;padding:12px;background:rgba(0,0,0,.82);backdrop-filter:blur(8px)}
 .modal.show{display:flex}
-.mc{width:min(100%,420px);max-height:88dvh;overflow:auto;border:1px solid var(--line);border-radius:22px;padding:14px;text-align:center;background:linear-gradient(170deg,#251236,#11091b);box-shadow:0 24px 70px rgba(0,0,0,.7);animation:pop .2s ease}
+.mc{width:calc(100vw - 24px);max-width:420px;max-height:88dvh;overflow:auto;border:1px solid var(--line);border-radius:22px;padding:14px;text-align:center;background:linear-gradient(170deg,#251236,#11091b);box-shadow:0 24px 70px rgba(0,0,0,.7);animation:pop .2s ease}
 @keyframes pop{from{transform:scale(.94);opacity:.45}to{transform:scale(1);opacity:1}}
 .mi{font-size:52px;animation:shine 1.2s ease infinite alternate}
 @keyframes shine{from{filter:drop-shadow(0 0 2px rgba(255,255,255,.2))}to{filter:drop-shadow(0 0 14px rgba(255,209,102,.45))}}
 .mt{font-size:21px;font-weight:900;margin:5px 0}
 .mx{white-space:pre-line;line-height:1.55;color:rgba(255,255,255,.92);font-size:14px}
 .ma{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:10px}
-.mb{border:none;border-radius:999px;padding:11px;color:#fff;font-weight:900;background:linear-gradient(130deg,var(--pink2),var(--pink))}
+.mb{border:none;border-radius:999px;padding:11px;min-height:42px;color:#fff;font-weight:900;line-height:1.25;white-space:normal;overflow-wrap:break-word;background:linear-gradient(130deg,var(--pink2),var(--pink))}
 .mb.alt{border:1px solid var(--line);background:rgba(255,255,255,.12)}
 .mb.good{background:linear-gradient(130deg,#00c777,#00aa62)}
 .mb.bad{background:linear-gradient(130deg,#ff5a6e,#ff3450)}
@@ -123,8 +126,19 @@ input,select{width:100%;padding:9px;border-radius:11px;border:1px solid var(--li
 @keyframes bounce{from{transform:translateY(0) scale(1)}to{transform:translateY(-8px) scale(1.08)}}
 .stats{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:8px}
 .stat{padding:8px;border:1px solid var(--line);border-radius:10px;background:rgba(255,255,255,.08);font-size:12px}
+.debug-panel{position:fixed;z-index:18;top:8px;right:8px;display:none;width:min(300px,calc(100vw - 16px));gap:6px;padding:10px;border:1px solid rgba(255,209,102,.55);border-radius:14px;background:rgba(14,8,24,.94);box-shadow:0 14px 40px rgba(0,0,0,.45);font-size:12px}
+.debug-panel.show{display:grid}
+.debug-title{font-weight:900;color:#ffd166;text-align:center}
+.debug-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px}
+.debug-panel button,.debug-panel select,.debug-panel input{min-height:32px;border-radius:9px;border:1px solid rgba(255,255,255,.22);background:rgba(255,255,255,.1);color:#fff;font-size:12px;font-weight:800}
+.debug-panel input{text-align:center}
+.debug-panel button{padding:6px}
+.debug-panel .danger{border-color:rgba(255,79,104,.7);background:rgba(255,79,104,.18)}
 
-@media(max-width:390px){.board{height:min(70dvh,650px)}.pc{min-height:40px;font-size:12px}.mv{height:36px}.mt{font-size:19px}}
+@media(max-width:390px){.board{height:min(70dvh,650px)}.pc{min-height:40px;font-size:12px}.wins{font-size:10px;min-width:22px;padding:1px 5px}.mv{height:36px}.mt{font-size:19px}.mx{font-size:13px}.timer-display{font-size:24px}}
+@media(max-width:760px){#start{align-items:flex-start}.card{padding:12px}#start .g2{grid-template-columns:1fr}#start .eg{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:350px){.ma{grid-template-columns:1fr!important}.mc{padding:12px}.mb{min-height:40px;padding:10px}.players{grid-template-columns:minmax(0,1fr) 22px minmax(0,1fr);gap:4px}}
+@media(max-width:430px){.debug-panel{left:8px;right:8px;top:8px;max-height:50dvh;overflow:auto}}
 @media(max-height:730px){.title{display:none}.board{height:min(68dvh,620px)}.mv{height:36px}}
 </style>
 </head>
@@ -135,18 +149,18 @@ input,select{width:100%;padding:9px;border-radius:11px;border:1px solid var(--li
     <h1>בום של אהבה</h1>
     <p class="lead">תחרות זוגית מצחיקה, אינטימית ובלתי צפויה</p>
     <div id="lastWinner" class="last-win"></div>
-    <div class="g2"><div><label>שם שחקן/ית 1</label><input id="n1" placeholder="נועה"></div><div><label>שם שחקן/ית 2</label><input id="n2" placeholder="דניאל"></div></div>
+    <div class="g2"><div><label>שם משתתף 1</label><input id="n1" placeholder="נועה"></div><div><label>שם משתתף 2</label><input id="n2" placeholder="דניאל"></div></div>
     <div class="g2"><div><label>מין</label><select id="g1"><option value="f">נקבה</option><option value="m">זכר</option></select></div><div><label>מין</label><select id="g2"><option value="m">זכר</option><option value="f">נקבה</option></select></div></div>
-    <div class="g2"><div><label>אימוג׳י שחקן/ית 1</label><div id="e1" class="eg"></div></div><div><label>אימוג׳י שחקן/ית 2</label><div id="e2" class="eg"></div></div></div>
-    <label class="drink"><span>מצב שתייה 🍷</span><input id="drinkMode" type="checkbox"></label>
+    <div class="g2"><div><label>אימוג׳י משתתף 1</label><div id="e1" class="eg"></div></div><div><label>אימוג׳י משתתף 2</label><div id="e2" class="eg"></div></div></div>
+    <label class="drink"><span>מצב שתייה 🥂</span><input id="drinkMode" type="checkbox"></label>
     <button class="main" id="startBtn">יאללה מתחילים</button>
   </div>
 </section>
 <section id="game" class="screen">
   <div class="wrap">
     <div class="top">
-      <div class="head"><button id="settingsBtn" class="set">⚙️</button><div class="title">בום של אהבה</div><div></div></div>
-      <div class="players"><div id="pc0" class="pc"><span id="pe0"></span><span id="pn0"></span><div id="fx0" class="fx"></div></div><div>VS</div><div id="pc1" class="pc"><span id="pe1"></span><span id="pn1"></span><div id="fx1" class="fx"></div></div></div>
+      <div class="head"><button id="settingsBtn" class="set">⚙️</button><div id="gameTitle" class="title">בום של אהבה</div><div></div></div>
+      <div class="players"><div id="pc0" class="pc"><span id="pe0"></span><span id="pn0" class="pname"></span><span id="pw0" class="wins"></span><div id="fx0" class="fx"></div></div><div>VS</div><div id="pc1" class="pc"><span id="pe1"></span><span id="pn1" class="pname"></span><span id="pw1" class="wins"></span><div id="fx1" class="fx"></div></div></div>
       <div id="turn" class="turn"></div>
     </div>
     <div class="board-wrap"><div id="board" class="board"></div><div id="layer" class="layer"></div><div id="t0" class="tk"></div><div id="t1" class="tk"></div></div>
@@ -154,11 +168,26 @@ input,select{width:100%;padding:9px;border-radius:11px;border:1px solid var(--li
   </div>
 </section>
 <div id="modal" class="modal"><div class="mc"><div id="mi" class="mi"></div><div id="mt" class="mt"></div><div id="mx" class="mx"></div><div id="ma" class="ma"></div></div></div>
+<div id="debugPanel" class="debug-panel" dir="rtl">
+  <div class="debug-title">DEBUG</div>
+  <button id="dbgReveal" type="button">חשיפת כל הלוח</button>
+  <div class="debug-grid">
+    <button id="dbgBomb" type="button">הבא = פצצה</button>
+    <button id="dbgDuel" type="button">הבא = דו־קרב</button>
+    <button id="dbgDrink" type="button">הבא = שתייה</button>
+    <button id="dbgEmpty" type="button">הבא = ריקה</button>
+    <button id="dbgGoal" type="button">הבא = גביע</button>
+    <button id="dbgReset" class="danger" type="button">איפוס משחק</button>
+  </div>
+  <select id="dbgPlayer"><option value="0">משתתף 1</option><option value="1">משתתף 2</option></select>
+  <div class="debug-grid"><input id="dbgR" type="number" min="0" max="7" value="7" aria-label="row"><input id="dbgC" type="number" min="0" max="5" value="5" aria-label="column"></div>
+  <button id="dbgMove" type="button">העבר למיקום</button>
+</div>
 <div id="confetti" class="cf"></div><div id="toasts" class="toast-wrap"></div>
 <script>
-const ROWS=8,COLS=6,START=[7,5],GOAL=[0,0],IC={kiss:"💋",task:"🎯",question:"❔",temptation:"❓",duel:"⚔️",drink:"🍷",empty:"",bomb:"💣",goal:"🏆"},EM=["😈","😎","🥵","😘","😜","🫦","😏","😍","🤠","🦊","🔥","⚡","🩷","💫","🍓","🍒"];
+const ROWS=8,COLS=6,START=[7,5],GOAL=[0,0],IC={kiss:"💋",task:"🎯",question:"❔",temptation:"❓",duel:"⚔️",drink:"🥂",empty:"",bomb:"💣",goal:"🏆"},EM=["😈","😎","🥵","😘","😜","🫦","😏","😍","🤠","🦊","🔥","⚡","🩷","💫","🍓","🍒"];
 const $=id=>document.getElementById(id),board=$("board"),layer=$("layer"),modal=$("modal");
-const S={e1:"😈",e2:"😎",board:[],players:[],cur:0,turn:1,busy:false,over:false,pending:null,advance:false,manualMove:null,actor:null,history:{kiss:[],task:[],question:[],duel:[],tempt:[],drink:[]},endgameShown:false,modalVersion:0,timer:null,drink:false,stats:{bombs:0,duels:0,risks:0}};
+const S={e1:"😈",e2:"😎",board:[],players:[],cur:0,turn:1,busy:false,over:false,pending:null,advance:false,manualMove:null,actor:null,history:{kiss:[],task:[],question:[],duel:[],tempt:[],drink:[]},endgameShown:false,modalVersion:0,timer:null,drink:false,stats:{bombs:0,duels:0,risks:0},debug:false,debugForce:null,debugTaps:[]};
 const W={
   m:{give:"תן",do:"עשה",say:"אמור",ask:"שאל",whisper:"לחש",choose:"בחר",look:"הסתכל",describe:"תאר",tell:"ספר",try:"נסה",hold:"החזק",invent:"המצא",make:"גרום",take:"קח",return:"חזור",drink:"שתה",stand:"עמוד",show:"הראה",perform:"בצע",start:"תלחץ",answer:"ענה",count:"מנה",touch:"גע",keep:"שמור",win:"ניצח",fail:"נכשל",ready:"מוכן"},
   f:{give:"תני",do:"עשי",say:"אמרי",ask:"שאלי",whisper:"לחשי",choose:"בחרי",look:"הסתכלי",describe:"תארי",tell:"ספרי",try:"נסי",hold:"החזיקי",invent:"המציאי",make:"גרמי",take:"קחי",return:"חזרי",drink:"שתי",stand:"עמדי",show:"הראי",perform:"בצעי",start:"תלחצי",answer:"עני",count:"מני",touch:"געי",keep:"שמרי",win:"ניצחה",fail:"נכשלה",ready:"מוכנה"}
@@ -277,12 +306,12 @@ const DB = {
     {c:"{actor}, יש לך 15 שניות לומר 6 מילים שמתחילות באות ש'",win:"+2 צעדים",lose:"חזרה צעד אחד בלי להפעיל קובייה"}
   ],
   drink:[
-    "{actor}, {drink} לגימה קטנה לכבוד התחרות 🍷",
-    "{actor}, {choose} מי מרים כוס עכשיו 🍷",
-    "{actor}, {say} טוסט קצר ל{target} ואז {drink} לגימה 🍷",
-    "{actor}, {drink} לגימה אם חייכת בתור האחרון 🍷",
-    "{actor}, {choose} כלל שתייה קטן לתור הבא בלבד 🍷",
-    "{actor}, {drink} לגימה ותגיד מילה אחת על מצב הרוח שלך 🍷"
+    "{actor}, {drink} לגימה קטנה לכבוד התחרות 🥂",
+    "{actor}, {choose} מי מרים כוס עכשיו 🥂",
+    "{actor}, {say} טוסט קצר ל{target} ואז {drink} לגימה 🥂",
+    "{actor}, {drink} לגימה אם חייכת בתור האחרון 🥂",
+    "{actor}, {choose} כלל שתייה קטן לתור הבא בלבד 🥂",
+    "{actor}, {drink} לגימה ותגיד מילה אחת על מצב הרוח שלך 🥂"
   ]
 };
 const TEXTS = {
@@ -320,6 +349,7 @@ function manualStepText(n){return `${stepText(n)} ${n===1?"ידני":"ידניי
 function wonText(i){const p=S.players[i];return `${p.name} ${p.gender==="m"?"ניצח":"ניצחה"}`}
 function readWins(){try{const x=JSON.parse(localStorage.getItem(WIN_KEY)||"{}");return x&&typeof x==="object"?x:{}}catch(_e){return {}}}
 function writeWins(x){try{localStorage.setItem(WIN_KEY,JSON.stringify(x))}catch(_e){}}
+function resetWins(){try{localStorage.removeItem(WIN_KEY);localStorage.removeItem("boomLastWinner")}catch(_e){}if(S.players.length){S.players.forEach(p=>p.wins=0);ui()}}
 function winKey(name){return String(name||"").trim().toLowerCase()||"שחקן"}
 function getWins(name){const x=readWins()[winKey(name)];return Number.isFinite(+x)?Math.max(0,+x):0}
 function recordWin(name){const wins=readWins(),key=winKey(name),prev=getWins(name),total=prev+1;wins[key]=total;writeWins(wins);return{prev,total}}
@@ -330,20 +360,54 @@ function attachTimer(txt,opt={}){const sec=opt.sec||timerSeconds(txt);if(!sec)re
 function attachEmojiPicker(txt){if(!/3\s*אימוג/.test(String(txt))||!/תאר/.test(String(txt)))return;const box=document.createElement("div"),picked=document.createElement("div"),grid=document.createElement("div"),chosen=[];box.className="emoji-task";picked.className="emoji-picked";picked.textContent="בחרו 3 אימוג׳ים";grid.className="emoji-mini";EM.forEach(e=>{const b=document.createElement("button");b.type="button";b.textContent=e;b.onclick=()=>{const i=chosen.indexOf(e);if(i>=0){chosen.splice(i,1);b.classList.remove("sel")}else if(chosen.length<3){chosen.push(e);b.classList.add("sel")}picked.textContent=chosen.length?chosen.join(" "):"בחרו 3 אימוג׳ים"};grid.appendChild(b)});box.appendChild(picked);box.appendChild(grid);$("mx").appendChild(box)}
 function toast(t,ms=1500,cls=""){const e=document.createElement("div");e.className="toast"+(cls?(" "+cls):"");e.textContent=t;$("toasts").appendChild(e);setTimeout(()=>{e.style.opacity="0";e.style.transform="translateY(8px)";setTimeout(()=>e.remove(),220)},ms)}
 function pop(i,t,x,actions,adv,opt={}){clearTimer();S.advance=adv;S.modalVersion++;$("mi").textContent=i||"";$("mt").textContent=t||"";$("mx").innerHTML=(x||"").replaceAll("\n","<br>");if(opt.timerSec)attachTimer("",{sec:opt.timerSec,auto:!!opt.autoTimer});if(opt.inlineTimer)attachTimer(x);attachEmojiPicker(x);const ma=$("ma");ma.innerHTML="";ma.style.gridTemplateColumns=actions.length===1?"1fr":"repeat("+Math.min(actions.length,2)+",1fr)";actions.forEach((a,j)=>{const b=document.createElement("button");b.className="mb"+(a.kindClass?(" "+a.kindClass):"")+(j&&!a.kindClass?" alt":"");b.textContent=a.t;b.onclick=()=>act(a.k,S.modalVersion);ma.appendChild(b)});modal.classList.add("show")}
-function closeModal(){clearTimer();modal.classList.remove("show");S.actor=null;requestAnimationFrame(()=>{if(!S.over)updateMoveButtons()})}
+function closeModal(){clearTimer();if(modal.classList.contains("show"))S.modalVersion++;modal.classList.remove("show");S.actor=null;requestAnimationFrame(()=>{if(!S.over)updateMoveButtons()})}
 function wait(ms){return new Promise(r=>setTimeout(r,ms))}
 function actorIndex(){return S.actor??(S.manualMove?S.manualMove.player:S.cur)}
 function fmt(txt,idx=actorIndex()){const a=S.players[idx],b=S.players[1-idx],w=W[a.gender]||W.f;let x=String(txt).replaceAll("{actor}",a.name).replaceAll("{target}",b.name);Object.keys(w).forEach(k=>x=x.replaceAll("{"+k+"}",w[k]));return x}
 function pickNoRepeat(cat){const arr=DB[cat],h=S.history[cat],cand=arr.filter(x=>!h.includes(x));const v=(cand.length?cand:arr)[Math.floor(Math.random()*(cand.length?cand:arr).length)];h.push(v);if(h.length>10)h.shift();return v}
 function mkEmoji(id,n){EM.forEach(v=>{const b=document.createElement("button");b.className="emoji"+((n===1?S.e1:S.e2)===v?" sel":"");b.textContent=v;b.onclick=()=>{if(n===1)S.e1=v;else S.e2=v;[...$(id).children].forEach(x=>x.classList.remove("sel"));b.classList.add("sel")};$(id).appendChild(b)})}
 mkEmoji("e1",1);mkEmoji("e2",2);
-function showLastWinner(){try{const w=localStorage.getItem("boomLastWinner"),el=$("lastWinner");if(w&&el){el.textContent=`המנצח/ת במשחק הקודם: ${w} 🏆`;el.style.display="block"}}catch(_e){}}
+function showLastWinner(){try{const w=localStorage.getItem("boomLastWinner"),el=$("lastWinner");if(w&&el){el.textContent=`ניצחון במשחק הקודם: ${w} 🏆`;el.style.display="block"}}catch(_e){}}
 showLastWinner();
 function path(){let r=START[0],c=START[1],p=[[r,c]];while(r!==GOAL[0]||c!==GOAL[1]){if(r>0&&c>0){Math.random()<.56?r--:c--}else if(r>0)r--;else c--;p.push([r,c])}return p}
 function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
 function pickType(r,c,safe){if((r===START[0]&&c===START[1])||(r===GOAL[0]&&c===GOAL[1]))return"empty";const drink=S.drink&&Math.random()<.13;if(drink)return"drink";const x=Math.random();if(safe){if(x<.12)return"empty";if(x<.32)return"kiss";if(x<.54)return"task";if(x<.74)return"question";if(x<.9)return"temptation";return"duel"}if(x<.14)return"empty";if(x<.34)return"kiss";if(x<.57)return"task";if(x<.75)return"question";if(x<.91)return"temptation";return"duel"}
-function paint(c){const n=c.el;n.className="cell"+(c.reveal?" seen "+c.type:"");if(c.r===START[0]&&c.c===START[1])n.classList.add("start");if(c.r===GOAL[0]&&c.c===GOAL[1])n.classList.add("goal");n.innerHTML="";if(c.r===START[0]&&c.c===START[1])n.innerHTML+='<span class="badge">START</span>';if(c.r===GOAL[0]&&c.c===GOAL[1])n.innerHTML+='<span class="badge">🏆</span><span class="icon">'+IC.goal+"</span>";else if(c.reveal&&c.type!=="bomb")n.innerHTML+='<span class="icon">'+IC[c.type]+"</span>"}
-function tuneBoardTypes(){const playable=[];let duels=[];for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++){const cell=S.board[r][c];if((r===START[0]&&c===START[1])||(r===GOAL[0]&&c===GOAL[1])||cell.type==="bomb")continue;playable.push(cell);if(cell.type==="duel")duels.push(cell)}while(duels.length>6){const cell=duels.pop();cell.type=Math.random()<.5?"task":"temptation"}let empty=playable.filter(x=>x.type==="empty").length;while(empty<5&&playable.length){const cell=playable[Math.floor(Math.random()*playable.length)];if(cell.type!=="empty"){cell.type="empty";empty++}}for(let r=0;r<ROWS;r++){for(let c=2;c<COLS;c++){const a=S.board[r][c-2],b=S.board[r][c-1],cell=S.board[r][c];if(cell.type!=="bomb"&&cell.type!=="empty"&&a.type===cell.type&&b.type===cell.type)cell.type="empty"}}}
+function paint(c){const n=c.el;n.className="cell"+(c.reveal?" seen "+c.type:"");if(c.r===START[0]&&c.c===START[1])n.classList.add("start");if(c.r===GOAL[0]&&c.c===GOAL[1])n.classList.add("goal");n.innerHTML="";if(c.r===START[0]&&c.c===START[1])n.innerHTML+='<span class="badge">START</span>';if(c.r===GOAL[0]&&c.c===GOAL[1])n.innerHTML+='<span class="badge">🏆</span><span class="icon">'+IC.goal+"</span>";else if(c.reveal&&c.type!=="bomb")n.innerHTML+='<span class="icon">'+IC[c.type]+"</span>";else if(c.reveal&&c.type==="bomb"&&S.debug)n.innerHTML+='<span class="icon">'+IC.bomb+"</span>"}
+function tuneBoardTypes(){
+  const playable=[];let duels=[];
+  for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++){
+    const cell=S.board[r][c];
+    if((r===START[0]&&c===START[1])||(r===GOAL[0]&&c===GOAL[1])||cell.type==="bomb")continue;
+    playable.push(cell);
+    if(cell.type==="duel")duels.push(cell);
+  }
+  while(duels.length>6){const cell=duels.pop();cell.type=Math.random()<.5?"task":"temptation"}
+  const ensureDrinkTiles=()=>{
+    if(!S.drink)return;
+    let drinks=playable.filter(x=>x.type==="drink").length;
+    while(drinks<3){
+      const choices=playable.filter(x=>x.type!=="drink"&&x.type!=="empty");
+      if(!choices.length)break;
+      choices[Math.floor(Math.random()*choices.length)].type="drink";
+      drinks++;
+    }
+  };
+  ensureDrinkTiles();
+  let empty=playable.filter(x=>x.type==="empty").length;
+  while(empty<5&&playable.length){
+    const choices=playable.filter(x=>x.type!=="empty"&&x.type!=="drink");
+    if(!choices.length)break;
+    choices[Math.floor(Math.random()*choices.length)].type="empty";
+    empty++;
+  }
+  for(let r=0;r<ROWS;r++){
+    for(let c=2;c<COLS;c++){
+      const a=S.board[r][c-2],b=S.board[r][c-1],cell=S.board[r][c];
+      if(cell.type!=="bomb"&&cell.type!=="empty"&&a.type===cell.type&&b.type===cell.type)cell.type=S.drink&&cell.type==="drink"?"task":"empty";
+    }
+  }
+  ensureDrinkTiles();
+}
 function buildBoard(){board.innerHTML="";layer.innerHTML="";S.board=[];const safe=new Set(path().map(p=>p.join(","))),bombCandidates=[];for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++){const key=`${r},${c}`;if((r===START[0]&&c===START[1])||(r===GOAL[0]&&c===GOAL[1])||safe.has(key))continue;bombCandidates.push(key)}const bombSet=new Set(shuffle(bombCandidates).slice(0,12));for(let r=0;r<ROWS;r++){S.board[r]=[];for(let c=0;c<COLS;c++){const el=document.createElement("div");el.className="cell";if(r===START[0]&&c===START[1])el.classList.add("start");if(r===GOAL[0]&&c===GOAL[1])el.classList.add("goal");board.appendChild(el);const key=`${r},${c}`,cell={r,c,type:bombSet.has(key)?"bomb":pickType(r,c,safe.has(key)),reveal:false,el};S.board[r][c]=cell;const s=document.createElement("div");s.dataset.r=r;s.dataset.c=c;layer.appendChild(s)}}tuneBoardTypes();for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++)paint(S.board[r][c])}
 function slotPos(r,c){const s=[...layer.children].find(x=>+x.dataset.r===r&&+x.dataset.c===c),a=layer.getBoundingClientRect(),b=s.getBoundingClientRect();return{x:b.left-a.left+b.width/2,y:b.top-a.top+b.height/2}}
 function placeTokens(){[0,1].forEach(i=>{const t=$("t"+i),p=S.players[i],o=slotPos(p.pos[0],p.pos[1]);t.style.left=o.x+"px";t.style.top=o.y+"px";t.textContent=p.emoji});stackTokens()}
@@ -351,7 +415,7 @@ function stackTokens(){const same=S.players[0].pos.join(",")===S.players[1].pos.
 function isEndgame(){return S.players.some(p=>Math.abs(p.pos[0]-GOAL[0])+Math.abs(p.pos[1]-GOAL[1])<=3)}
 function progress(p){return((START[0]-p[0])+(START[1]-p[1]))/((ROWS-1)+(COLS-1))}
 function updateEffects(){[0,1].forEach(i=>{$("fx"+i).textContent=S.manualMove&&S.manualMove.player===i?`${S.manualMove.kind==="back"?"-":"+"}${S.manualMove.remaining}`:""})}
-function ui(){const active=actorIndex();S.players.forEach((p,i)=>{$("pe"+i).textContent=p.emoji;$("pn"+i).textContent=`${p.name} ${p.wins||0}`;$("pc"+i).classList.toggle("a",i===active)});const t=$("turn");t.classList.toggle("endgame",isEndgame());t.textContent=S.manualMove?`${S.players[active].emoji} ${S.players[active].name} • ${S.manualMove.label}`:`תור ${S.turn} • ${S.players[S.cur].emoji} ${S.players[S.cur].name}`;board.classList.toggle("endgame",isEndgame());updateEffects();updateMoveButtons();if(isEndgame()&&!S.endgameShown){S.endgameShown=true;Audio.play("bad");toast("🔥 מצב סיום: הלחץ עולה!",1700,"danger")}}
+function ui(){const active=actorIndex();S.players.forEach((p,i)=>{$("pe"+i).textContent=p.emoji;$("pn"+i).textContent=p.name;$("pw"+i).textContent=p.wins||0;$("pc"+i).classList.toggle("a",i===active)});const t=$("turn");t.classList.toggle("endgame",isEndgame());t.textContent=S.manualMove?`${S.players[active].emoji} ${S.players[active].name} • ${S.manualMove.label}`:`תור ${S.turn} • ${S.players[S.cur].emoji} ${S.players[S.cur].name}`;board.classList.toggle("endgame",isEndgame());updateEffects();updateMoveButtons();if(isEndgame()&&!S.endgameShown){S.endgameShown=true;Audio.play("bad");toast("🔥 מצב סיום: הלחץ עולה!",1700,"danger")}}
 function canMove(i,dr,dc){const p=S.players[i],nr=p.pos[0]+dr,nc=p.pos[1]+dc;if(nr<0||nr>=ROWS||nc<0||nc>=COLS)return false;if(S.manualMove&&S.manualMove.kind==="back"){const now=Math.abs(p.pos[0]-GOAL[0])+Math.abs(p.pos[1]-GOAL[1]),next=Math.abs(nr-GOAL[0])+Math.abs(nc-GOAL[1]);return next>now}return true}
 function hasManualMoves(){if(!S.manualMove)return true;const i=S.manualMove.player;return canMove(i,-1,0)||canMove(i,1,0)||canMove(i,0,-1)||canMove(i,0,1)}
 function updateMoveButtons(){const i=S.manualMove?S.manualMove.player:S.cur,p=S.players[i],lock=S.busy||S.over||modal.classList.contains("show");$("u").textContent="↑";$("d").textContent="↓";$("l").textContent="←";$("r").textContent="→";$("u").disabled=!(canMove(i,-1,0)&&!lock);$("d").disabled=!(canMove(i,1,0)&&!lock);$("l").disabled=!(canMove(i,0,-1)&&!lock);$("r").disabled=!(canMove(i,0,1)&&!lock)}
@@ -398,7 +462,7 @@ async function resolveCell(cell){
   if(cell.type==="kiss"){card("💋","אינטימיות",fmt(pickNoRepeat("kiss")));return}
   if(cell.type==="task"){card("🎯","אתגר",fmt(pickNoRepeat("task")));return}
   if(cell.type==="question"){card("❔","שאלה",fmt(pickNoRepeat("question")));return}
-  if(cell.type==="drink"){card("🍷","שתייה",fmt(pickNoRepeat("drink")));return}
+  if(cell.type==="drink"){card("🥂","שתייה",fmt(pickNoRepeat("drink")));return}
   if(cell.type==="duel"){startDuel();return}
   if(cell.type==="temptation"){startTemptation();return}
   if(cell.type==="empty"){pop("","קובייה ריקה","לא קרה כלום... ממשיכים",[{t:"ממשיכים",k:"done"}],true);return}
@@ -409,8 +473,8 @@ function distToGoal(pos){return Math.abs(pos[0]-GOAL[0])+Math.abs(pos[1]-GOAL[1]
 function findBackStep(i){const p=S.players[i].pos,now=distToGoal(p),dirs=[[1,0],[0,1],[-1,0],[0,-1]];for(const [dr,dc] of dirs){const nr=p[0]+dr,nc=p[1]+dc;if(nr>=0&&nr<ROWS&&nc>=0&&nc<COLS&&distToGoal([nr,nc])>now)return[nr,nc]}return null}
 async function penaltyBackOne(player,msg){S.manualMove=null;S.busy=true;closeModal();updateMoveButtons();const step=findBackStep(player),w=W[S.players[player].gender]||W.f;if(step){S.players[player].pos=[step[0],step[1]];await animateToken(player,step[0],step[1]);stackTokens();toast(msg||`${S.players[player].name} ${w.return} צעד אחד בלי להפעיל קובייה`,1400,"danger")}else toast("אין קובייה אחורה — ממשיכים",1200,"warn");S.busy=false;if(!S.over)nextTurn();else updateMoveButtons()}
 function startTemptation(){S.stats.risks++;const t=pickNoRepeat("tempt"),player=actorIndex();S.pending={k:"tempt",d:t,player};const timed=timerSeconds(t.c)>0;pop("❓","הימור",`${S.players[player].name}, רוצה לקחת סיכון?\n\nהצלחה: ${fmt(t.win,player)}\nכישלון: ${fmt(t.lose,player)}${timed?"\n\nהמשימה עצמה תופיע רק אחרי לחיצה על התחלה.":`\n\n${fmt(t.c,player)}`}`,[{t:"לקחת סיכון",k:"risk",kindClass:"bad"},{t:"לא לקחת סיכון",k:"safe",kindClass:"alt"}],true)}
-function startDuel(){S.stats.duels++;const d=pickNoRepeat("duel"),player=actorIndex();S.pending={k:"duel_intro",d,player};pop("⚔️","דו־קרב",'לפניכם דו־קרב זוגי. ברגע שתלחצו על "התחל דו־קרב", תופיע משימה מוגבלת בזמן. הראשון שמצליח לבצע אותה מנצח וזוכה בצעד נוסף.',[{t:"התחל דו־קרב",k:"duelStart"}],false)}
-function showDuelChallenge(x){S.pending={k:"duel_result",d:x.d,player:x.player};const sec=timerSeconds(x.d)||30;pop("⚔️","דו־קרב",`${fmt(x.d,x.player)}\n\nהראשון שמצליח לבצע את המשימה מנצח`,[{t:wonText(0),k:"duelWin0",kindClass:"good"},{t:wonText(1),k:"duelWin1",kindClass:"good"}],false,{timerSec:sec,autoTimer:true})}
+function startDuel(){S.stats.duels++;const d=pickNoRepeat("duel"),player=actorIndex();S.pending={k:"duel_intro",d,player};pop("⚔️","דו־קרב","תופיע משימה אמיתית לביצוע מחוץ למסך.\n\nשני השחקנים מבצעים את המשימה בעולם האמיתי.\n\nהשחקן הראשון שמצליח להשלים אותה מנצח.\n\nאחרי שהמשימה הסתיימה, בחרו למטה מי ניצח.",[{t:"התחל דו־קרב",k:"duelStart"}],false)}
+function showDuelChallenge(x){S.pending={k:"duel_result",d:x.d,player:x.player};const sec=timerSeconds(x.d);pop("⚔️","דו־קרב",`${fmt(x.d,x.player)}\n\nהראשון שמצליח לבצע את המשימה מנצח`,[{t:wonText(0),k:"duelWin0",kindClass:"good"},{t:wonText(1),k:"duelWin1",kindClass:"good"}],false,sec?{timerSec:sec,autoTimer:true}:{})}
 function openSuccessFail(){clearTimer();const player=S.pending?.player??actorIndex();$("mt").textContent="תוצאת ההימור";$("mx").textContent=`${S.players[player].name}, מה הייתה התוצאה?`;const ma=$("ma");ma.innerHTML="";ma.style.gridTemplateColumns="1fr 1fr";const s=document.createElement("button"),f=document.createElement("button");s.className="mb good";f.className="mb bad";s.textContent="הצלחתי";f.textContent="לא הצלחתי";s.onclick=()=>act("succ",S.modalVersion);f.onclick=()=>act("fail",S.modalVersion);ma.appendChild(s);ma.appendChild(f)}
 function applyTemptOutcome(x,success){const player=x.player,txt=success?fmt(x.d.win,player):fmt(x.d.lose,player),steps=success?(txt.includes("+3")?3:2):(txt.includes("צעד אחד")?1:2),kind=success?"forward":"back",w=W[S.players[player].gender]||W.f;startManualMove(player,steps,kind,`${success?"ההימור הצליח":"ההימור נכשל"}: ${txt}. ${w.choose} ${manualStepText(steps)}.`)}
 function microTitle(){const a=S.stats.bombs<3?"שורדי הפצצות":"מכורי הסיכון",b=S.stats.duels>6?"אלופי הדו-קרב":"כוכבי הפלרטוט";return`${a} • ${b}`}
@@ -481,6 +545,7 @@ async function applyModalAction(k,v){
   if(v!==S.modalVersion)return;
   if(k==="restart"){location.reload();return}
   if(k==="mute"){Audio.setMuted(!Audio.muted);toast(Audio.muted?"🔇 סאונד הושתק":"🔈 סאונד הופעל",900);closeModal();S.busy=false;updateMoveButtons();return}
+  if(k==="resetWins"){resetWins();toast("סטטיסטיקת הניצחונות אופסה",1200,"warn");closeModal();S.busy=false;updateMoveButtons();return}
   if(k==="help"){
     pop("ℹ️","עזרה","מטרה: להגיע ראשונים לגביע.\n💋 אינטימיות\n🎯 משימה\n❔ שאלה\n❓ הימור\n⚔️ דו־קרב: קודם מתחילים, אחר כך מופיעה משימה על זמן. המנצח מקבל צעד פרס אחד בלבד.\n💣 פצצה מחזירה להתחלה ונשארת פעילה\nקובייה ריקה = לא קורה כלום\n\nבמשימה עם זמן הטיימר מתחיל רק אחרי מסך ההסבר. לחיצה על \"לא הצלחתי\" מחזירה צעד אחד בלי להפעיל את הקובייה שנוחתים עליה.",[{t:"חזרה",k:"resume"}],false);
     return
@@ -495,10 +560,100 @@ async function applyModalAction(k,v){
   if(S.advance)nextTurn();
   updateMoveButtons()
 }
-async function moveTurn(dr,dc){if(S.busy||S.over||modal.classList.contains("show"))return;const manual=S.manualMove,me=manual?manual.player:S.cur,p=S.players[me],nr=p.pos[0]+dr,nc=p.pos[1]+dc;if(!canMove(me,dr,dc))return;S.busy=true;updateMoveButtons();p.pos=[nr,nc];await animateToken(me,nr,nc);stackTokens();if(checkVictory(me)){S.manualMove=null;S.busy=false;updateMoveButtons();return}const cell=S.board[nr][nc];if(manual){manual.remaining--;if(cell.type==="bomb"){S.manualMove=null;await tileRevealFlow(cell,me);S.busy=false;ui();return}if(manual.remaining>0){S.busy=false;if(!hasManualMoves()){toast("אין עוד צעדים זמינים — התנועה הסתיימה",1100);S.manualMove=null;nextTurn()}else ui();return}S.manualMove=null;await tileRevealFlow(cell,me);S.busy=false;ui();return}await tileRevealFlow(cell,me);S.busy=false;ui()}
+function applyDebugForce(nr,nc){
+  if(!S.debug||!S.debugForce)return[nr,nc];
+  const forced=S.debugForce;
+  S.debugForce=null;
+  if(forced==="goal"){toast("DEBUG: הצעד הבא הועבר לגביע",900,"warn");return[GOAL[0],GOAL[1]]}
+  const cell=S.board[nr]?.[nc];
+  if(cell&&!(nr===START[0]&&nc===START[1])&&!(nr===GOAL[0]&&nc===GOAL[1])){
+    cell.type=forced;
+    cell.reveal=false;
+    paint(cell);
+    toast(`DEBUG: הקובייה הבאה היא ${forced}`,900,"warn");
+  }
+  return[nr,nc]
+}
+async function moveTurn(dr,dc){
+  if(S.busy||S.over||modal.classList.contains("show"))return;
+  const manual=S.manualMove,me=manual?manual.player:S.cur,p=S.players[me];
+  let nr=p.pos[0]+dr,nc=p.pos[1]+dc;
+  if(!canMove(me,dr,dc))return;
+  [nr,nc]=applyDebugForce(nr,nc);
+  S.busy=true;
+  updateMoveButtons();
+  p.pos=[nr,nc];
+  await animateToken(me,nr,nc);
+  stackTokens();
+  if(checkVictory(me)){S.manualMove=null;S.busy=false;updateMoveButtons();return}
+  const cell=S.board[nr][nc];
+  if(manual){
+    manual.remaining--;
+    if(cell.type==="bomb"){S.manualMove=null;await tileRevealFlow(cell,me);S.busy=false;ui();return}
+    if(manual.remaining>0){
+      S.busy=false;
+      if(!hasManualMoves()){toast("אין עוד צעדים זמינים — התנועה הסתיימה",1100);S.manualMove=null;nextTurn()}else ui();
+      return
+    }
+    S.manualMove=null;
+    await tileRevealFlow(cell,me);
+    S.busy=false;
+    ui();
+    return
+  }
+  await tileRevealFlow(cell,me);
+  S.busy=false;
+  ui()
+}
 function nextTurn(){S.cur=1-S.cur;S.turn++;ui()}
-function startGame(){if($("game").classList.contains("show"))return;const n1=$("n1").value.trim()||"שחקן א",n2=$("n2").value.trim()||"שחקן ב";S.players=[{name:n1,gender:$("g1").value,emoji:S.e1,pos:[...START],wins:getWins(n1)},{name:n2,gender:$("g2").value,emoji:S.e2,pos:[...START],wins:getWins(n2)}];S.cur=0;S.turn=1;S.busy=false;S.over=false;S.pending=null;S.advance=false;S.manualMove=null;S.actor=null;S.history={kiss:[],task:[],question:[],duel:[],tempt:[],drink:[]};S.stats={bombs:0,duels:0,risks:0};S.endgameShown=false;S.modalVersion=0;S.drink=$("drinkMode").checked;buildBoard();$("start").classList.remove("show");$("game").classList.add("show");ui();placeTokens();const drinkLine=S.drink?'\n🍷 שתייה — משימת שתייה קלילה במהלך המשחק':"";pop("💘","מתחילים",`💋 אינטימיות\n🎯 משימה\n❔ שאלה\n❓ הימור\n⚔️ דו־קרב\n💣 פצצה${drinkLine}\nקובייה ריקה = אין פעולה\n\nמשימות עם זמן ייפתחו במסך הסבר ורק אז הטיימר יתחיל. כל משימה היא הזמנה בלבד; אם לא מתאים לבצע משהו, לחצו על כפתור התוצאה המתאים והמשיכו.`,[{t:"הבנתי",k:"resume"}],false)}
-function openSettings(){if(S.busy){toast("רגע, פעולה עדיין מתבצעת",900,"warn");return}pop("⚙️","הגדרות","",[{t:Audio.muted?"הפעלת סאונד":"השתקת סאונד",k:"mute"},{t:"עזרה",k:"help"},{t:"משחק חדש",k:"newGame"},{t:"חזרה למשחק",k:"resume"}],false)}
+function startGame(){if($("game").classList.contains("show"))return;const n1=$("n1").value.trim()||"שחקן א",n2=$("n2").value.trim()||"שחקן ב";S.players=[{name:n1,gender:$("g1").value,emoji:S.e1,pos:[...START],wins:getWins(n1)},{name:n2,gender:$("g2").value,emoji:S.e2,pos:[...START],wins:getWins(n2)}];S.cur=0;S.turn=1;S.busy=false;S.over=false;S.pending=null;S.advance=false;S.manualMove=null;S.actor=null;S.history={kiss:[],task:[],question:[],duel:[],tempt:[],drink:[]};S.stats={bombs:0,duels:0,risks:0};S.endgameShown=false;S.modalVersion=0;S.drink=$("drinkMode").checked;buildBoard();$("start").classList.remove("show");$("game").classList.add("show");ui();placeTokens();const drinkLine=S.drink?'\n🥂 שתייה — משימת שתייה קלילה במהלך המשחק':"";pop("💘","מתחילים",`💋 אינטימיות\n🎯 משימה\n❔ שאלה\n❓ הימור\n⚔️ דו־קרב\n💣 פצצה${drinkLine}\nקובייה ריקה = אין פעולה\n\nמשימות עם זמן ייפתחו במסך הסבר ורק אז הטיימר יתחיל. כל משימה היא הזמנה בלבד; אם לא מתאים לבצע משהו, לחצו על כפתור התוצאה המתאים והמשיכו.`,[{t:"הבנתי",k:"resume"}],false)}
+function openSettings(){if(S.busy){toast("רגע, פעולה עדיין מתבצעת",900,"warn");return}pop("⚙️","הגדרות","",[{t:Audio.muted?"הפעלת סאונד":"השתקת סאונד",k:"mute"},{t:"עזרה",k:"help"},{t:"איפוס סטטיסטיקת ניצחונות",k:"resetWins",kindClass:"bad"},{t:"משחק חדש",k:"newGame"},{t:"חזרה למשחק",k:"resume"}],false)}
+function renderDebug(){
+  const p=$("debugPanel");
+  if(!p)return;
+  p.classList.toggle("show",S.debug);
+  if(S.players.length){
+    $("dbgPlayer").innerHTML=S.players.map((x,i)=>`<option value="${i}">${i+1}. ${x.name}</option>`).join("");
+  }
+}
+function debugTitleTap(){
+  const now=Date.now();
+  S.debugTaps=S.debugTaps.filter(t=>now-t<850);
+  S.debugTaps.push(now);
+  if(S.debugTaps.length>=3){
+    S.debug=true;
+    S.debugTaps=[];
+    renderDebug();
+    toast("DEBUG הופעל",900,"warn");
+  }
+}
+function debugSetForce(type){if(!S.debug)return;S.debugForce=type;toast(`DEBUG: הקובייה הבאה תוגדר כ-${type}`,1100,"warn")}
+function debugRevealBoard(){
+  if(!S.debug||!S.board.length)return;
+  for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++){S.board[r][c].reveal=true;paint(S.board[r][c])}
+  toast("DEBUG: הלוח נחשף",900,"warn")
+}
+function clampNum(v,min,max){v=Number(v);return Number.isFinite(v)?Math.max(min,Math.min(max,Math.round(v))):min}
+function debugMovePlayer(){
+  if(!S.debug||!S.players.length||!S.board.length)return;
+  const i=clampNum($("dbgPlayer").value,0,S.players.length-1),r=clampNum($("dbgR").value,0,ROWS-1),c=clampNum($("dbgC").value,0,COLS-1);
+  S.manualMove=null;
+  S.actor=null;
+  S.players[i].pos=[r,c];
+  placeTokens();
+  if(checkVictory(i))return;
+  ui();
+  toast(`DEBUG: המיקום של ${S.players[i].name} עודכן ל-${r},${c}`,900,"warn")
+}
+$("gameTitle").addEventListener("pointerdown",debugTitleTap);
+$("dbgReveal").onclick=debugRevealBoard;
+$("dbgBomb").onclick=()=>debugSetForce("bomb");
+$("dbgDuel").onclick=()=>debugSetForce("duel");
+$("dbgDrink").onclick=()=>debugSetForce("drink");
+$("dbgEmpty").onclick=()=>debugSetForce("empty");
+$("dbgGoal").onclick=()=>debugSetForce("goal");
+$("dbgMove").onclick=debugMovePlayer;
+$("dbgReset").onclick=()=>{if(S.debug)location.reload()};
 $("startBtn").onclick=startGame;$("settingsBtn").onclick=openSettings;$("u").onclick=()=>moveTurn(-1,0);$("d").onclick=()=>moveTurn(1,0);$("l").onclick=()=>moveTurn(0,-1);$("r").onclick=()=>moveTurn(0,1);
 window.addEventListener("pointerdown",()=>Audio.ensure(),{once:true});
 async function act(k,v){if(v!==S.modalVersion)return;[...$("ma").querySelectorAll("button")].forEach(b=>b.disabled=true);try{await applyModalAction(k,v)}catch(e){console.error(e);toast("אירעה שגיאה בפעולה. נסו שוב.",1200,"danger");[...$("ma").querySelectorAll("button")].forEach(b=>b.disabled=false)}}
