@@ -21,15 +21,18 @@ header{padding:22px 0 8px;text-align:center}
 h1{margin:0;font-family:var(--fd);font-weight:900;font-size:26px}
 h1 span{color:var(--pink)}
 header p{margin:6px 0 0;color:var(--muted);font-size:15px;line-height:1.5}
-.tabs{position:sticky;top:0;z-index:5;display:flex;gap:6px;overflow-x:auto;margin:10px -14px 0;padding:10px 14px;background:rgba(11,5,16,.94);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);scrollbar-width:none}
+.tabs{display:flex;flex-wrap:wrap;gap:6px;margin:10px -14px 0;padding:10px 14px;background:rgba(11,5,16,.94);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);scrollbar-width:none}
 .tabs::-webkit-scrollbar{display:none}
-.tabs button{flex:0 0 auto;min-height:44px;padding:0 14px;border-radius:999px;border:1px solid var(--line);background:rgba(255,255,255,.05);font-weight:800;font-size:14px;white-space:nowrap;color:var(--muted)}
+.tabs button{flex:1 1 auto;min-height:44px;padding:0 14px;border-radius:999px;border:1px solid var(--line);background:rgba(255,255,255,.05);font-weight:800;font-size:14px;white-space:nowrap;color:var(--muted)}
 .tabs button.on{background:linear-gradient(135deg,#ff64a2,#e3004d);border-color:transparent;color:#fff}
 .tabs button small{font-weight:700;opacity:.8}
 .flt{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px}
 .flt button{min-height:44px;border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,.05);font-weight:800;font-size:14px;color:var(--muted)}
 .flt button.on{background:#fff;color:#1a0a22;border-color:transparent}
 .none{padding:30px 10px;text-align:center;color:var(--dim);font-weight:600}
+.style{margin:14px 0 4px;padding:12px 14px;border-radius:16px;background:linear-gradient(160deg,rgba(255,79,150,.14),rgba(255,255,255,.03));border:1px solid rgba(255,90,160,.3)}
+.style b{display:block;font-family:var(--fd);font-weight:800;font-size:16px}
+.style p{margin:4px 0 0;color:var(--muted);font-size:14px;line-height:1.55}
 .lvl{margin:20px 2px 8px;font-family:var(--fd);font-weight:800;font-size:16px;color:var(--gold)}
 .card{margin-bottom:10px;padding:12px;border-radius:16px;background:rgba(255,255,255,.05);border:1px solid var(--line);transition:border-color .2s,background .2s,opacity .2s}
 .card.keep{border-color:rgba(47,210,154,.6);background:rgba(47,210,154,.08)}
@@ -72,10 +75,10 @@ textarea:focus{outline:none;border-color:var(--gold)}
 <div class="wrap">
   <header>
     <h1>עוברים על <span>הקלפים</span></h1>
-    <p>הסבב הקודם הוחל. עכשיו מוצגים רק הקלפים החדשים: מסמנים נשאר, יורד או לשנות, ובסוף שולחים לי את הסיכום.</p>
+    <p>הסבב הקודם הוחל. ב"לבדיקה" מוצגים הקלפים החדשים, החפיסות שעוד לא עברת עליהן והטקסטים של מסכי המשחק. אפשר גם לסמן 👍 או 👎 ישר מתוך המשחק, והסימון יופיע כאן.</p>
   </header>
   <nav class="tabs" id="tabs"></nav>
-  <div class="flt"><button type="button" id="fNew" class="on">🆕 רק חדשים</button><button type="button" id="fAll">כל הקלפים</button></div>
+  <div class="flt"><button type="button" id="fNew" class="on">🆕 לבדיקה</button><button type="button" id="fAll">כל הקלפים</button></div>
   <main id="list"></main>
   <div class="free">
     <label for="general">הערה כללית (לא חובה)</label>
@@ -90,7 +93,20 @@ textarea:focus{outline:none;border-color:var(--gold)}
 <div class="toast" id="toast"></div>
 <script src="decks.js"></script>
 <script>
-const NAMES={kiss:"💋 אינטימיות",task:"🎯 משימה",question:"❔ שאלה",duel:"⚔️ דו־קרב",tempt:"❓ סיכון",drink:"🥂 שתייה",coupon:"🎟️ שוברים"};
+const NAMES={kiss:"💋 אינטימיות",task:"🎯 משימה",question:"❔ שאלה",duel:"⚔️ דו־קרב",tempt:"❓ סיכון",drink:"🥂 שתייה",coupon:"🎟️ שוברים",bomb:"💣 הודעות פצצה",victory:"🏆 הודעות ניצחון",screen:"🖥️ מסכי הסבר"};
+const STYLE={
+  kiss:["מגע ונשיקות","קלף שמקרב פיזית: נשיקות, חיבוקים, עיסויים ולחישות. מי ששלף/ה עושה את זה לבן/בת הזוג. הרבה קלפים כאן עם טיימר, וברמות הגבוהות הם נעשים חושניים יותר."],
+  task:["מה שעושים מול הצד השני","מי ששלף/ה מבצע/ת משהו: מצחיק (חיקוי, נאום, פוזה), מפלרטט (מבט, מחמאה) או מגע (עיסוי, ריקוד צמוד). זו החפיסה הכי גדולה, והיא קובעת את האווירה של הערב."],
+  question:["שאלה שעונים עליה בקול","פותחת שיחה: זיכרונות משותפים, מה מושך, מה מדליק. ברמת חמים השאלות מתוקות, ובמתפוצץ הן על פנטזיות ועל מה יקרה אחרי המשחק."],
+  duel:["שניכם במקביל, מי מנצח","קלף תחרותי ומהיר: מי שמסיים/ת ראשון/ה או מנצח/ת מקבל/ת צעד בונוס על הלוח. עובד הכי טוב כשהוא פיזי או קשור לזוג, ופחות כשהוא טריוויה כללית."],
+  tempt:["הימור עם שעון","רשות: מחליטים לפני שרואים את הקלף. יש זמן קצוב; הצלחה מקדמת צעד, כישלון מחזיר צעד. הקלף צריך להיות קשה בדיוק במידה כדי שיהיה מתח."],
+  drink:["לגימה","מופיע רק במצב שתייה קליל או פרוע. הוראות קצרות, בלי לחץ. מים ושתייה קלה תמיד בסדר."],
+  coupon:["פרס למנצח/ת","מי שמנצח/ת בוחר/ת שובר אחד מתוך שלושה. השובר נשמר במגירה עד שמממשים אותו. אמור להיות משהו שבאמת רוצים לקבל."],
+  bomb:["ההודעה כשדורכים על פצצה","מופיעה באקראי אחרי הפיצוץ, כשהכלי חוזר להתחלה. אמורה לעקוץ קצת ולהצחיק."],
+  victory:["השורה במסך הניצחון","מופיעה מתחת לשם של מי שניצח/ה. אמורה להרגיש כמו חגיגה."],
+  screen:["מסכי ההסבר במשחק","הטקסטים שמסבירים מה קורה: לפני דו־קרב, לפני סיכון, לפני משימה עם זמן ועוד. כאן מסמנים מה מבלבל, ארוך מדי או לא בטון הנכון."]
+};
+const REVIEW_ALL=new Set(["duel","tempt","drink","coupon","bomb","victory","screen"]);
 const LVL={1:"🌶️ חמים",2:"🔥 לוהט",3:"💥 מתפוצץ"};
 const VERBS={give:"תני",do:"עשי",say:"אמרי",ask:"שאלי",whisper:"לחשי",choose:"בחרי",look:"הסתכלי",describe:"תארי",tell:"ספרי",try:"נסי",hold:"החזיקי",invent:"המציאי",make:"גרמי",take:"קחי",return:"חזרי",drink:"שתי",stand:"עמדי",show:"הראי",perform:"בצעי",start:"תלחצי",answer:"עני",count:"מני",touch:"געי",keep:"שמרי"};
 const KEY="pxCardReview";
@@ -101,18 +117,19 @@ const FRESH=new Set(["{actor}, {give} ל{target} נשיקה ארוכה על הל
 if(st._v!==3){st={_v:3,_general:""};try{localStorage.setItem(KEY,JSON.stringify(st))}catch(_e){}}
 let onlyNew=true;
 const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(st))}catch(_e){}};
-const DECKS=Object.assign({},LB_DECK,{coupon:LB_COUPONS.map(c=>[0,c[0]+" "+c[1]])});
+const DECKS=Object.assign({},LB_DECK,{coupon:LB_COUPONS.map(c=>[0,c[0]+" "+c[1]]),bomb:LB_SCREENS.bomb.map(t=>[0,t]),victory:LB_SCREENS.victory.map(t=>[0,t]),screen:LB_SCREENS.screens.map(t=>[0,t])});
+const toCheck=(cat,t)=>REVIEW_ALL.has(cat)||FRESH.has(t);
 const CATS=Object.keys(DECKS);
 let cur=CATS[0];
-function plain(t){let x=t.replaceAll("{bo}","בו").replaceAll("{actor}","נועה").replaceAll("{target}","דניאל");for(const k in VERBS)x=x.replaceAll("{"+k+"}",VERBS[k]);return x}
-function pretty(t){let x=esc(t).replaceAll("{bo}","בו").replaceAll("{actor}","<b>נועה</b>").replaceAll("{target}","<i>דניאל</i>");for(const k in VERBS)x=x.replaceAll("{"+k+"}",VERBS[k]);return x}
+function plain(t){let x=t.replaceAll("{start}","תלחצי").replaceAll("{bo}","בו").replaceAll("{actor}","נועה").replaceAll("{target}","דניאל");for(const k in VERBS)x=x.replaceAll("{"+k+"}",VERBS[k]);return x}
+function pretty(t){let x=esc(t).replaceAll("{start}","תלחצי").replaceAll("{bo}","בו").replaceAll("{actor}","<b>נועה</b>").replaceAll("{target}","<i>דניאל</i>");for(const k in VERBS)x=x.replaceAll("{"+k+"}",VERBS[k]);return x}
 const idOf=(cat,i)=>cat+"-"+(i+1);
 function counts(cat){const a=DECKS[cat];let k=0,d=0,e=0;a.forEach((_,i)=>{const s=(st[idOf(cat,i)]||{}).s;if(s==="keep")k++;else if(s==="drop")d++;else if(s==="edit")e++});return{k,d,e,n:a.length}}
-function renderTabs(){$("tabs").innerHTML=CATS.map(c=>{const x=counts(c);const nf=DECKS[c].filter(q=>FRESH.has(q[1])).length;return `<button type="button" data-cat="${c}" class="${c===cur?"on":""}">${NAMES[c]} <small>${onlyNew?nf+" חדשים":x.n}</small></button>`}).join("")}
+function renderTabs(){$("tabs").innerHTML=CATS.map(c=>{const x=counts(c);const nf=DECKS[c].filter(q=>toCheck(c,q[1])).length;if(onlyNew&&!nf)return "";return `<button type="button" data-cat="${c}" class="${c===cur?"on":""}">${NAMES[c]} <small>${onlyNew?nf:x.n}</small></button>`}).join("")}
 function renderList(){
-  const a=DECKS[cur];let html="",lastLv=null;
+  const a=DECKS[cur];let html=`<section class="style"><b>${NAMES[cur]} · ${STYLE[cur][0]}</b><p>${STYLE[cur][1]}</p></section>`,lastLv=null;
   a.forEach((c,i)=>{
-    if(onlyNew&&!FRESH.has(c[1]))return;
+    if(onlyNew&&!toCheck(cur,c[1]))return;
     if(c[0]!==lastLv&&c[0]){lastLv=c[0];html+=`<div class="lvl">${LVL[c[0]]}</div>`}
     const id=idOf(cur,i),s=st[id]||{},lv=s.lv||c[0];
     html+=`<article class="card ${s.s||""}" data-id="${id}">
@@ -123,7 +140,7 @@ function renderList(){
       ${c[0]?`<div class="lv">רמה: ${[1,2,3].map(n=>`<button type="button" data-lv="${n}" class="${n===lv?"on":""}">${LVL[n].split(" ")[0]}</button>`).join("")}</div>`:""}</div>
     </article>`;
   });
-  $("list").innerHTML=html||'<p class="none">אין קלפים חדשים בחפיסה הזו.</p>';
+  $("list").innerHTML=html;
 }
 function renderStat(){let k=0,d=0,e=0,n=0;CATS.forEach(c=>{const x=counts(c);k+=x.k;d+=x.d;e+=x.e;n+=x.n});$("stat").innerHTML=`עברת על <b>${k+d+e}</b> מתוך <b>${n}</b> · 👍 ${k} · 👎 ${d} · ✏️ ${e}`}
 function summary(){
@@ -158,8 +175,9 @@ $("send").addEventListener("click",async()=>{
   try{await navigator.clipboard.writeText(text);toast("הסיכום הועתק. הדביקי אותו בצ'אט")}
   catch(_e){out.classList.add("show");out.focus();out.select();toast("סמני את הטקסט והעתיקי")}
 });
-$("fNew").onclick=()=>{onlyNew=true;$("fNew").classList.add("on");$("fAll").classList.remove("on");renderTabs();renderList()};
+$("fNew").onclick=()=>{onlyNew=true;if(!DECKS[cur].some(q=>toCheck(cur,q[1])))cur=CATS.find(c=>DECKS[c].some(q=>toCheck(c,q[1])))||cur;$("fNew").classList.add("on");$("fAll").classList.remove("on");renderTabs();renderList()};
 $("fAll").onclick=()=>{onlyNew=false;$("fAll").classList.add("on");$("fNew").classList.remove("on");renderTabs();renderList()};
+if(onlyNew)if(!DECKS[cur].some(q=>toCheck(cur,q[1])))cur=CATS.find(c=>DECKS[c].some(q=>toCheck(c,q[1])))||cur;
 renderTabs();renderList();renderStat();
 </script>
 </body>

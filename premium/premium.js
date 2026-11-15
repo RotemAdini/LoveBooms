@@ -76,6 +76,8 @@ Audio.play=function(t){if(!this.ensure())return;(SFX[{tap:"ui"}[t]||t]||SFX.ui)(
 const _fmt=fmt;
 fmt=function(txt,idx=actorIndex()){const b=S.players[1-idx],m=!!b&&b.gender==="m";return _fmt(String(txt).replaceAll("{bo}",m?"בו":"בה"),idx)};
 
+if(typeof LB_SCREENS==="object"){TEXTS.bomb=LB_SCREENS.bomb.slice();TEXTS.victory=LB_SCREENS.victory.slice()}
+
 /* ---------- חפיסות: רמות חום, טעימה, קלפים אישיים ---------- */
 const LV=new Map();
 let last=null,fresh=false;
@@ -124,7 +126,8 @@ function drawAnim(type){
     {transform:"perspective(900px) translate(0,0) scale(1) rotateY(90deg)",opacity:1}
   ],{duration:520,easing:"cubic-bezier(.22,.61,.36,1)",fill:"forwards"});
   const done=()=>el.remove();
-  return an.finished.then(done,done);
+  /* גיבוי: אם הדפדפן עוצר אנימציות (לשונית ברקע, חיסכון בסוללה) המשחק לא נתקע */
+  return Promise.race([an.finished,wait(800)]).then(done,done);
 }
 const _resolveCell=resolveCell;
 resolveCell=async function(cell){
@@ -237,11 +240,33 @@ renderModalShell=function(theme,kind,i,t){
   if(last&&last.cat===cat&&LV.has(last.key)){const lv=LV.get(last.key);badge=`<span class="heat">${lv?"🔥".repeat(lv)+" "+LEVEL_NAME[lv]:"✍️ קלף אישי"}</span>`}
   $("mfx").insertAdjacentHTML("beforeend",`<span class="pip tl">${ic}</span><span class="pip br">${ic}</span>${badge}`);
 };
+/* דירוג קלף מתוך המשחק. נשמר באותו מקום שדף המעבר (review.html) קורא ממנו */
+const RKEY="pxCardReview";
+function rvLoad(){try{const x=JSON.parse(localStorage.getItem(RKEY)||"{}");return x&&typeof x==="object"?x:{}}catch(_e){return {}}}
+function rvSave(x){if(x._v===undefined)x._v=3;try{localStorage.setItem(RKEY,JSON.stringify(x))}catch(_e){}}
+function cardId(cat,key){const i=(LB_DECK[cat]||[]).findIndex(c=>c[1]===key);return i<0?null:cat+"-"+(i+1)}
+function cardShown(key){const segs=String(key).split(/\{[a-z]+\}/).map(s=>s.trim()).sort((a,b)=>b.length-a.length);return !!segs[0]&&segs[0].length>=4&&$("mx").textContent.includes(segs[0])}
+function addRating(){
+  const mc=$("mcard");mc.querySelectorAll(".rate").forEach(e=>e.remove());
+  if(!last||!LV.get(last.key)||!mc.classList.contains("pface")||!cardShown(last.key))return;
+  const id=cardId(last.cat,last.key);if(!id)return;
+  const cur=(rvLoad()[id]||{}).s||"";
+  const el=document.createElement("div");el.className="rate";
+  el.innerHTML=`<span>מה דעתך על הקלף?</span><button type="button" data-r="keep" class="${cur==="keep"?"on":""}" aria-label="אהבתי">👍</button><button type="button" data-r="drop" class="${cur==="drop"?"on":""}" aria-label="לא אהבתי">👎</button>`;
+  el.addEventListener("click",e=>{
+    const b=e.target.closest("button[data-r]");if(!b)return;e.stopPropagation();
+    const st=rvLoad(),s=st[id]||(st[id]={});s.s=s.s===b.dataset.r?"":b.dataset.r;rvSave(st);
+    el.querySelectorAll("button").forEach(x=>x.classList.toggle("on",x.dataset.r===s.s));
+    SFX.ui();vib(10);
+  });
+  mc.insertBefore(el,$("ma"));
+}
 const _pop=pop;
 pop=function(){
   _pop.apply(this,arguments);
   const th=$("mcard").dataset.theme;
   modal.classList.toggle("flip180",!!P.settings.table&&S.players.length===2&&["kiss","task","question","risk"].includes(th)&&actorIndex()===1);
+  try{addRating()}catch(_e){}
 };
 const _showTurnBanner=showTurnBanner;
 showTurnBanner=function(i){$("turnBanner").classList.toggle("flip180",!!P.settings.table&&i===1);return _showTurnBanner(i)};
