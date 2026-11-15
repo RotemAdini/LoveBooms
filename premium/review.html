@@ -26,6 +26,10 @@ header p{margin:6px 0 0;color:var(--muted);font-size:15px;line-height:1.5}
 .tabs button{flex:0 0 auto;min-height:44px;padding:0 14px;border-radius:999px;border:1px solid var(--line);background:rgba(255,255,255,.05);font-weight:800;font-size:14px;white-space:nowrap;color:var(--muted)}
 .tabs button.on{background:linear-gradient(135deg,#ff64a2,#e3004d);border-color:transparent;color:#fff}
 .tabs button small{font-weight:700;opacity:.8}
+.flt{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px}
+.flt button{min-height:44px;border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,.05);font-weight:800;font-size:14px;color:var(--muted)}
+.flt button.on{background:#fff;color:#1a0a22;border-color:transparent}
+.none{padding:30px 10px;text-align:center;color:var(--dim);font-weight:600}
 .lvl{margin:20px 2px 8px;font-family:var(--fd);font-weight:800;font-size:16px;color:var(--gold)}
 .card{margin-bottom:10px;padding:12px;border-radius:16px;background:rgba(255,255,255,.05);border:1px solid var(--line);transition:border-color .2s,background .2s,opacity .2s}
 .card.keep{border-color:rgba(47,210,154,.6);background:rgba(47,210,154,.08)}
@@ -68,9 +72,10 @@ textarea:focus{outline:none;border-color:var(--gold)}
 <div class="wrap">
   <header>
     <h1>עוברים על <span>הקלפים</span></h1>
-    <p>מסמנים כל קלף: נשאר, יורד, או לשנות. הסימונים נשמרים בטלפון, ובסוף שולחים לי את הסיכום.</p>
+    <p>הסבב הקודם הוחל. עכשיו מוצגים רק הקלפים החדשים: מסמנים נשאר, יורד או לשנות, ובסוף שולחים לי את הסיכום.</p>
   </header>
   <nav class="tabs" id="tabs"></nav>
+  <div class="flt"><button type="button" id="fNew" class="on">🆕 רק חדשים</button><button type="button" id="fAll">כל הקלפים</button></div>
   <main id="list"></main>
   <div class="free">
     <label for="general">הערה כללית (לא חובה)</label>
@@ -92,31 +97,33 @@ const KEY="pxCardReview";
 const $=id=>document.getElementById(id);
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 let st={};try{st=JSON.parse(localStorage.getItem(KEY)||"{}")||{}}catch(_e){}
-const FRESH=new Set(["duel-3","duel-5","duel-7","duel-10","duel-12","duel-13","duel-15","duel-18","duel-19","tempt-1","tempt-2","tempt-3","tempt-4","tempt-5","kiss-17","kiss-20","task-28","task-20","task-18","task-25"]);
-if(st._v!==2){FRESH.forEach(id=>delete st[id]);st._v=2;try{localStorage.setItem(KEY,JSON.stringify(st))}catch(_e){}}
+const FRESH=new Set(["{actor}, {give} ל{target} נשיקה ארוכה על הלחי, קרוב לשפתיים","{actor}, {hold} את הפנים של {target} בשתי ידיים ו{give} נשיקה אחת","{actor}, {give} ל{target} חיבוק מאחור של 20 שניות","{actor}, {give} ל{target} נשיקה אחת בעיניים עצומות, בלי למהר","{actor}, {give} ל{target} נשיקה צרפתית של 15 שניות","{actor}, {give} ל{target} נשיקה מאחורי האוזן","{actor}, {give} ל{target} נשיקות מהכתף ועד האוזן","{actor}, {give} ל{target} עיסוי גב תחתון של דקה","{actor}, {give} ל{target} נשיקה על הבטן","{actor}, {give} ל{target} עיסוי ירכיים של דקה","{actor}, {do} ל{target} עיסוי ראש של 20 שניות","{actor}, {choose} שיר ו{do} ריקוד צמוד עם {target} במשך 30 שניות","{actor}, {describe} את {target} כאילו זו מודעת היכרויות","{actor}, {give} ל{target} עיסוי כפות רגליים של 30 שניות","{actor}, {do} ל{target} סרנדה: שורה אחת משיר אהבה, בכל הכוח","{actor}, {tell} ל{target} מה הדבר הראשון שהיית עושה אם הייתם לבד על אי בודד","{actor}, {give} ל{target} עיסוי צוואר של דקה","{actor}, {do} ל{target} ליטוף בגב, מתחת לחולצה, במשך 20 שניות","{actor}, {take} את היד של {target} ו{show} איפה הכי נעים לך","{actor}, מה הזיכרון הראשון שלך מ{target}?","{actor}, למה הכי התגעגעת אצל {target} בפעם האחרונה שלא התראיתם?","{actor}, איפה בגוף הכי נעים לך לקבל נשיקה?","{actor}, מה הלילה הכי טוב שהיה לכם ביחד?","{actor}, מאיזה חלק בגוף של {target} הכי קשה לך להתעלם?","{actor} ו{target}, כותבים בתורות מילה באצבע על הגב. מי שמנחש קודם מנצח","{actor} ו{target}, מי אומר קודם 5 דברים שהצד השני אוהב?","{actor} ו{target}, מי נזכר קודם מה לבשתם בדייט הראשון?","{actor} ו{target}, נשיקת בזק: סופרים עד 3, ומי שמנשק קודם את הלחי של הצד השני מנצח","{actor} ו{target}, חיקוי הדדי: מי מחקה טוב יותר את הצד השני? מי שצוחק קודם מפסיד","{actor} ו{target}, מי אומר קודם 3 מקומות שהייתם בהם ביחד השנה?","{actor} ו{target}, הורדת ידיים: הטוב משלושה","{actor} ו{target}, מי מצליח קודם לגנוב נשיקה? מותר להתחמק","{actor} ו{target}, מי אומר קודם את התאריך המדויק שבו הכרתם?","{actor}, יש לך 15 שניות לומר 5 מאכלים אהובים על {target}","{actor}, יש לך 20 שניות לומר 5 מקומות שטיילתם בהם ביחד","{actor}, יש לך 15 שניות לומר 4 דברים שמרגיזים את {target}, עם חיוך","{actor}, יש לך 20 שניות לשיר שורה משיר שמזכיר לך את {target}","{actor}, יש לך 10 שניות לומר 3 סיבות למה כדאי להתאהב בך"]);
+if(st._v!==3){st={_v:3,_general:""};try{localStorage.setItem(KEY,JSON.stringify(st))}catch(_e){}}
+let onlyNew=true;
 const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(st))}catch(_e){}};
 const DECKS=Object.assign({},LB_DECK,{coupon:LB_COUPONS.map(c=>[0,c[0]+" "+c[1]])});
 const CATS=Object.keys(DECKS);
 let cur=CATS[0];
-function plain(t){let x=t.replaceAll("{actor}","נועה").replaceAll("{target}","דניאל");for(const k in VERBS)x=x.replaceAll("{"+k+"}",VERBS[k]);return x}
-function pretty(t){let x=esc(t).replaceAll("{actor}","<b>נועה</b>").replaceAll("{target}","<i>דניאל</i>");for(const k in VERBS)x=x.replaceAll("{"+k+"}",VERBS[k]);return x}
+function plain(t){let x=t.replaceAll("{bo}","בו").replaceAll("{actor}","נועה").replaceAll("{target}","דניאל");for(const k in VERBS)x=x.replaceAll("{"+k+"}",VERBS[k]);return x}
+function pretty(t){let x=esc(t).replaceAll("{bo}","בו").replaceAll("{actor}","<b>נועה</b>").replaceAll("{target}","<i>דניאל</i>");for(const k in VERBS)x=x.replaceAll("{"+k+"}",VERBS[k]);return x}
 const idOf=(cat,i)=>cat+"-"+(i+1);
 function counts(cat){const a=DECKS[cat];let k=0,d=0,e=0;a.forEach((_,i)=>{const s=(st[idOf(cat,i)]||{}).s;if(s==="keep")k++;else if(s==="drop")d++;else if(s==="edit")e++});return{k,d,e,n:a.length}}
-function renderTabs(){$("tabs").innerHTML=CATS.map(c=>{const x=counts(c);return `<button type="button" data-cat="${c}" class="${c===cur?"on":""}">${NAMES[c]} <small>${x.k+x.d+x.e}/${x.n}</small></button>`}).join("")}
+function renderTabs(){$("tabs").innerHTML=CATS.map(c=>{const x=counts(c);const nf=DECKS[c].filter(q=>FRESH.has(q[1])).length;return `<button type="button" data-cat="${c}" class="${c===cur?"on":""}">${NAMES[c]} <small>${onlyNew?nf+" חדשים":x.n}</small></button>`}).join("")}
 function renderList(){
   const a=DECKS[cur];let html="",lastLv=null;
   a.forEach((c,i)=>{
+    if(onlyNew&&!FRESH.has(c[1]))return;
     if(c[0]!==lastLv&&c[0]){lastLv=c[0];html+=`<div class="lvl">${LVL[c[0]]}</div>`}
     const id=idOf(cur,i),s=st[id]||{},lv=s.lv||c[0];
     html+=`<article class="card ${s.s||""}" data-id="${id}">
-      <div class="meta"><span class="id">${id}</span>${FRESH.has(id)?'<span class="new">חדש</span>':""}</div>
+      <div class="meta"><span class="id">${id}</span>${FRESH.has(c[1])?'<span class="new">חדש</span>':""}</div>
       <p class="txt">${pretty(c[1])}</p>
       <div class="acts"><button type="button" class="k" data-s="keep">👍 נשאר</button><button type="button" class="d" data-s="drop">👎 יורד</button><button type="button" class="e" data-s="edit">✏️ לשנות</button></div>
       <div class="more"><textarea placeholder="איך היית כותבת אותו, או מה מפריע בו">${esc(s.note||"")}</textarea>
       ${c[0]?`<div class="lv">רמה: ${[1,2,3].map(n=>`<button type="button" data-lv="${n}" class="${n===lv?"on":""}">${LVL[n].split(" ")[0]}</button>`).join("")}</div>`:""}</div>
     </article>`;
   });
-  $("list").innerHTML=html;
+  $("list").innerHTML=html||'<p class="none">אין קלפים חדשים בחפיסה הזו.</p>';
 }
 function renderStat(){let k=0,d=0,e=0,n=0;CATS.forEach(c=>{const x=counts(c);k+=x.k;d+=x.d;e+=x.e;n+=x.n});$("stat").innerHTML=`עברת על <b>${k+d+e}</b> מתוך <b>${n}</b> · 👍 ${k} · 👎 ${d} · ✏️ ${e}`}
 function summary(){
@@ -151,6 +158,8 @@ $("send").addEventListener("click",async()=>{
   try{await navigator.clipboard.writeText(text);toast("הסיכום הועתק. הדביקי אותו בצ'אט")}
   catch(_e){out.classList.add("show");out.focus();out.select();toast("סמני את הטקסט והעתיקי")}
 });
+$("fNew").onclick=()=>{onlyNew=true;$("fNew").classList.add("on");$("fAll").classList.remove("on");renderTabs();renderList()};
+$("fAll").onclick=()=>{onlyNew=false;$("fAll").classList.add("on");$("fNew").classList.remove("on");renderTabs();renderList()};
 renderTabs();renderList();renderStat();
 </script>
 </body>

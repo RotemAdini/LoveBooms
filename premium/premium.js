@@ -72,6 +72,10 @@ const SFX=(()=>{
 Audio.muted=!!P.settings.muted;
 Audio.play=function(t){if(!this.ensure())return;(SFX[{tap:"ui"}[t]||t]||SFX.ui)()};
 
+/* {bo} = "בו" / "בה" לפי המגדר של בן/בת הזוג */
+const _fmt=fmt;
+fmt=function(txt,idx=actorIndex()){const b=S.players[1-idx],m=!!b&&b.gender==="m";return _fmt(String(txt).replaceAll("{bo}",m?"בו":"בה"),idx)};
+
 /* ---------- חפיסות: רמות חום, טעימה, קלפים אישיים ---------- */
 const LV=new Map();
 let last=null,fresh=false;
