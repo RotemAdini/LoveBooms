@@ -37,6 +37,7 @@ header p{margin:6px 0 0;color:var(--muted);font-size:15px;line-height:1.5}
 .txt i{font-style:normal;color:#8fd0ff;font-weight:700}
 .meta{display:flex;align-items:center;gap:6px;margin-bottom:8px;color:var(--dim);font-size:12px;font-weight:700}
 .meta .id{direction:ltr}
+.meta .new{padding:1px 8px;border-radius:999px;background:var(--pink);color:#fff;font-size:11px}
 .acts{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
 .acts button{min-height:44px;border-radius:12px;border:1px solid var(--line);background:rgba(0,0,0,.25);font-weight:800;font-size:14px}
 .card.keep .acts .k{background:var(--good);border-color:transparent;color:#03251a}
@@ -91,6 +92,8 @@ const KEY="pxCardReview";
 const $=id=>document.getElementById(id);
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 let st={};try{st=JSON.parse(localStorage.getItem(KEY)||"{}")||{}}catch(_e){}
+const FRESH=new Set(["duel-3","duel-5","duel-7","duel-10","duel-12","duel-13","duel-15","duel-18","duel-19","tempt-1","tempt-2","tempt-3","tempt-4","tempt-5","kiss-17","kiss-20","task-28","task-20","task-18","task-25"]);
+if(st._v!==2){FRESH.forEach(id=>delete st[id]);st._v=2;try{localStorage.setItem(KEY,JSON.stringify(st))}catch(_e){}}
 const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(st))}catch(_e){}};
 const DECKS=Object.assign({},LB_DECK,{coupon:LB_COUPONS.map(c=>[0,c[0]+" "+c[1]])});
 const CATS=Object.keys(DECKS);
@@ -106,7 +109,7 @@ function renderList(){
     if(c[0]!==lastLv&&c[0]){lastLv=c[0];html+=`<div class="lvl">${LVL[c[0]]}</div>`}
     const id=idOf(cur,i),s=st[id]||{},lv=s.lv||c[0];
     html+=`<article class="card ${s.s||""}" data-id="${id}">
-      <div class="meta"><span class="id">${id}</span></div>
+      <div class="meta"><span class="id">${id}</span>${FRESH.has(id)?'<span class="new">חדש</span>':""}</div>
       <p class="txt">${pretty(c[1])}</p>
       <div class="acts"><button type="button" class="k" data-s="keep">👍 נשאר</button><button type="button" class="d" data-s="drop">👎 יורד</button><button type="button" class="e" data-s="edit">✏️ לשנות</button></div>
       <div class="more"><textarea placeholder="איך היית כותבת אותו, או מה מפריע בו">${esc(s.note||"")}</textarea>
