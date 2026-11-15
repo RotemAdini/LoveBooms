@@ -55,7 +55,8 @@ const SFX=(()=>{
     flip:run(a=>{hiss(a,{f:3600,f2:1300,d:.13,g:.22,q:.7});hiss(a,{t:.1,f:2200,f2:900,d:.07,g:.12,q:.7})}),
     good:run(a=>{tone(a,{f:660,d:.14,g:.13,type:"triangle"});tone(a,{f:990,t:.09,d:.24,g:.13,type:"triangle"})}),
     bad:run(a=>{tone(a,{f:210,f2:105,d:.3,g:.16,type:"triangle"})}),
-    bomb:run(a=>{hiss(a,{type:"highpass",f:2000,d:.07,g:.4});hiss(a,{type:"lowpass",f:1100,f2:60,d:1.2,g:.85,att:.01});tone(a,{f:130,f2:32,d:.9,g:.7,att:.01})}),
+    bomb:run(a=>{hiss(a,{type:"highpass",f:1800,d:.09,g:.5});hiss(a,{type:"lowpass",f:1400,f2:50,d:2,g:.75,att:.008});tone(a,{f:150,f2:28,d:1.5,g:.7,att:.008});tone(a,{f:62,f2:30,t:.05,d:1.8,g:.45,type:"triangle"});for(let k=0;k<7;k++)hiss(a,{t:.25+Math.random()*1.1,f:900+Math.random()*2500,d:.06+Math.random()*.08,g:.12,q:2})}),
+    beep(f){const a=ctx();if(!a)return;try{tone(a,{f,d:.09,g:.15,type:"square"})}catch(_e){}},
     win:run(a=>{[523,659,784,1047].forEach((f,i)=>tone(a,{f,t:i*.12,d:.3,g:.14,type:"triangle"}));tone(a,{f:1568,t:.5,d:.7,g:.09});tone(a,{f:2093,t:.58,d:.7,g:.05})}),
     clink:run(a=>{[2100,3150,4300].forEach(f=>tone(a,{f,d:.55,g:.06,att:.002}));[2400,3600].forEach(f=>tone(a,{f,t:.08,d:.5,g:.05,att:.002}))}),
     tick:run(a=>{tone(a,{f:1050,d:.04,g:.1,type:"square"})}),
@@ -173,6 +174,43 @@ tileRevealFlow=async function(cell,actor=S.cur){
   if(P.settings.hold&&cell&&!cell.reveal){S.actor=actor;await holdToReveal(cell,actor)}
   return _tileRevealFlow(cell,actor);
 };
+
+/* ---------- פצצה: ספירה לאחור ופיצוץ ---------- */
+function blast(n,dist){
+  const chars=["💥","🔥","✦","💗","❤️","💔","✨"];
+  for(let k=0;k<n;k++){
+    const p=document.createElement("span"),a=Math.random()*Math.PI*2,d=dist*(.35+Math.random()*.8);
+    p.className="bs-p";p.textContent=chars[k%chars.length];p.style.fontSize=(18+Math.random()*26|0)+"px";
+    document.body.appendChild(p);
+    const x=innerWidth/2,y=innerHeight/2;
+    const an=p.animate([{transform:`translate(${x}px,${y}px) translate(-50%,-50%) scale(.3)`,opacity:1},{transform:`translate(${x+Math.cos(a)*d}px,${y+Math.sin(a)*d+60}px) translate(-50%,-50%) scale(1.2) rotate(${Math.random()*500-250|0}deg)`,opacity:0}],{duration:800+Math.random()*600,easing:"cubic-bezier(.1,.7,.3,1)",fill:"forwards"});
+    const done=()=>p.remove();an.finished.then(done,done);
+  }
+}
+function bombDrama(i){
+  if(rm())return Promise.resolve();
+  return new Promise(res=>{
+    const t=$("t"+i),r=t?t.getBoundingClientRect():{left:innerWidth/2,top:innerHeight/2,width:0,height:0};
+    const st=document.createElement("div");st.className="bomb-stage";
+    st.innerHTML=`<div class="bs-dim"></div><div class="bs-red"></div><div class="bs-bomb"><span class="bs-b">💣</span><span class="bs-spark"></span></div>`;
+    document.body.appendChild(st);
+    const b=st.querySelector(".bs-bomb"),dx=r.left+r.width/2-innerWidth/2,dy=r.top+r.height/2-innerHeight/2;
+    if(b.animate)b.animate([{transform:`translate(${dx}px,${dy}px) scale(.18)`},{transform:"translate(0,0) scale(1)"}],{duration:420,easing:"cubic-bezier(.34,1.56,.64,1)",fill:"both"});
+    SFX.fuseStart();SFX.fuseLevel(.45);
+    [380,760,1060,1290,1460,1580,1660].forEach((ms,k)=>setTimeout(()=>{SFX.beep(700+k*130);vib(25);SFX.fuseLevel(.5+k*.08);st.classList.remove("pulse");void st.offsetWidth;st.classList.add("pulse")},ms));
+    setTimeout(()=>{
+      SFX.fuseStop();b.remove();st.classList.add("boom");
+      st.insertAdjacentHTML("beforeend",`<div class="bs-flash"></div><div class="bs-ring"></div><div class="bs-ring r2"></div><div class="bs-ring r3"></div><div class="bs-txt">בום!</div>`);
+      const g=$("game");g.classList.remove("quake-big");void g.offsetWidth;g.classList.add("quake-big");setTimeout(()=>g.classList.remove("quake-big"),900);
+      blast(46,Math.max(innerWidth,innerHeight)*.55);
+      setTimeout(()=>vib([160,50,240,50,340]),0);
+      setTimeout(()=>st.remove(),1600);
+      res();
+    },1760);
+  });
+}
+const _bombHitPx=bombHit;
+bombHit=async function(i){const who=i===undefined?actorIndex():i;try{await bombDrama(who)}catch(_e){}return _bombHitPx.call(this,who)};
 
 /* ---------- כלי משחק: קפיצה ונחיתה ---------- */
 const _animateToken=animateToken;
