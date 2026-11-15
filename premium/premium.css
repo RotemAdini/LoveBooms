@@ -195,3 +195,14 @@ li.empty{display:block!important;padding:16px!important;text-align:center;color:
   .ub.open .ub-it{animation-duration:.01s!important;animation-delay:0s!important}
   .ub-lid{transition-duration:.01s!important}
 }
+
+/* ---------- פריסה: חפיסות גדולות בשורה, חצים קטנים בשורה ---------- */
+.moves{grid-template-columns:repeat(4,minmax(0,1fr));grid-template-areas:"dk dk dk dk" "l u d r";width:min(100%,350px);gap:8px}
+#deckL{grid-area:dk}#deckR{display:none}
+.decks{height:auto;gap:11px;padding:2px 0 13px}
+.dk{width:46px;height:62px;border-radius:9px;border-width:1.5px}
+.dk i{font-size:24px}
+.dk b{bottom:-9px;min-width:24px;padding:0 4px;font-size:12.5px}
+.mv{height:44px;border-radius:14px;box-shadow:0 4px 0 rgba(0,0,0,.42),0 8px 18px rgba(var(--pcr),.24),inset 0 1px 0 rgba(255,255,255,.4)}
+.mv svg{width:22px;height:22px}
+@media (max-height:700px){.dk{width:38px;height:51px}.dk i{font-size:20px}.decks{gap:9px;padding-bottom:11px}.mv{height:42px}}

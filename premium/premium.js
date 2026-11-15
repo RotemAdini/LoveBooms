@@ -20,7 +20,9 @@ P.settings=Object.assign({hold:true,table:false,level:1,muted:false},P.settings|
 if(!Array.isArray(P.custom))P.custom=[];
 if(!Array.isArray(P.coupons))P.coupons=[];
 function save(){try{localStorage.setItem(STORE,JSON.stringify(P))}catch(_e){}}
-function owned(){return !!(P.lic&&P.lic.code)}
+function owned(){return !!CFG.unlocked||!!(P.lic&&P.lic.code)}
+function hasLic(){return !!(P.lic&&P.lic.code)}
+P.settings.hold=false;
 function today(){return new Date().toLocaleDateString("he-IL")}
 function andName(n){n=String(n||"");return (/^[֐-׿]/.test(n)?"ו":"ו-")+n}
 function vib(p){try{if(navigator.vibrate)navigator.vibrate(p)}catch(_e){}}
@@ -97,8 +99,8 @@ function deckLeft(cat){const arr=DB[cat]||[],seen=new Set((S.history[cat]||[]).m
 function renderDecks(){
   const L=$("deckL"),R=$("deckR");if(!L||!R)return;
   const mk=cat=>{const n=deckLeft(cat),th=Math.max(1,Math.min(4,Math.ceil(n/6)));return `<span class="dk" data-cat="${cat}" data-th="${th}"><i>${CAT_IC[cat]}</i><b>${n}</b></span>`};
-  L.innerHTML=["kiss","task","question"].map(mk).join("");
-  R.innerHTML=["duel","tempt"].concat(S.drink?["drink"]:[]).map(mk).join("");
+  L.innerHTML=["kiss","task","question","duel","tempt"].concat(S.drink?["drink"]:[]).map(mk).join("");
+  R.innerHTML="";
 }
 
 /* ---------- שליפת קלף מהחפיסה ---------- */
@@ -242,7 +244,6 @@ openSettings=function(){
   pop("⚙️","הגדרות","",[
     {t:"חזרה למשחק",k:"resume",kindClass:"primary"},
     {t:Audio.muted?"🔇 סאונד כבוי":"🔈 סאונד פעיל",k:"pxMute"},
-    {t:P.settings.hold?"👆 חשיפה: לחיצה ארוכה":"👆 חשיפה: מיידית",k:"pxHold"},
     {t:P.settings.table?"🪑 מצב שולחן: פעיל":"🪑 מצב שולחן: כבוי",k:"pxTable"},
     {t:"🎁 הקופסה שלנו",k:"pxBox"},
     {t:"📖 איך משחקים",k:"howToPlay"},{t:"🧭 מקרא סמלים",k:"symbols"},
@@ -414,19 +415,19 @@ function printCoupons(){
 /* ---------- הקופסה שלנו ---------- */
 function showBox(){
   if(!owned()){showPaywall();return}
-  const n=P.lic.names||["",""],d=new Date(P.lic.ts||Date.now()).toLocaleDateString("he-IL");
-  sheet(`<div class="px-hero">🎁</div><h2>הקופסה של ${esc(n[0])} ${esc(andName(n[1]))}</h2>
-    <p class="px-sub">נפתחה ב־${esc(d)}${P.lic.from?` · מתנה מ${esc(P.lic.from)}`:""}</p>
-    ${P.lic.note?`<blockquote class="ub-note">${esc(P.lic.note)}</blockquote>`:""}
+  const L=hasLic()?P.lic:null,n=L?(L.names||["",""]):null,d=L?new Date(L.ts||Date.now()).toLocaleDateString("he-IL"):"";
+  sheet(`<div class="px-hero">🎁</div><h2>${L?`הקופסה של ${esc(n[0])} ${esc(andName(n[1]))}`:"הקופסה שלנו"}</h2>
+    ${L?`<p class="px-sub">נפתחה ב־${esc(d)}${L.from?` · מתנה מ${esc(L.from)}`:""}</p>`:`<p class="px-sub">כל מה שיש בקופסה, במקום אחד.</p>`}
+    ${L&&L.note?`<blockquote class="ub-note">${esc(L.note)}</blockquote>`:""}
     <div class="px-grid">
       <button type="button" class="px-tile" data-px="custom"><span>✍️</span><b>קלפים אישיים</b><small>${P.custom.length} בחפיסה</small></button>
       <button type="button" class="px-tile" data-px="drawer"><span>🎟️</span><b>מגירת השוברים</b><small>${P.coupons.filter(c=>!c.used).length} ממתינים</small></button>
       <button type="button" class="px-tile" data-px="print"><span>🖨️</span><b>להדפסה</b><small>שוברים וערכת שולחן</small></button>
       <button type="button" class="px-tile" data-px="install"><span>📲</span><b>התקנה</b><small>אייקון במסך הבית</small></button>
-      <button type="button" class="px-tile" data-px="gift"><span>💝</span><b>לתת במתנה</b><small>קישור עם הקדשה</small></button>
-      <button type="button" class="px-tile" data-px="unboxAgain"><span>📦</span><b>לפתוח שוב</b><small>את רגע פתיחת הקופסה</small></button>
+      ${L?`<button type="button" class="px-tile" data-px="gift"><span>💝</span><b>לתת במתנה</b><small>קישור עם הקדשה</small></button>
+      <button type="button" class="px-tile" data-px="unboxAgain"><span>📦</span><b>לפתוח שוב</b><small>את רגע פתיחת הקופסה</small></button>`:""}
     </div>
-    <p class="px-fine">קוד הפתיחה שלכם: <span class="ltr">${esc(P.lic.code)}</span><br>שמרו אותו כדי לפתוח את הקופסה גם במכשיר אחר.</p>`);
+    ${L?`<p class="px-fine">קוד הפתיחה שלכם: <span class="ltr">${esc(L.code)}</span><br>שמרו אותו כדי לפתוח את הקופסה גם במכשיר אחר.</p>`:""}`);
 }
 
 /* ---------- התקנה למסך הבית ---------- */
@@ -451,10 +452,11 @@ function setHeat(v){
 function refreshHome(){
   const plate=$("pxPlate"),home=$("pxHome"),ex=$("pxExtras");
   if(plate){
-    if(owned()){const n=P.lic.names||["",""];plate.innerHTML=`<span class="pl own">🎁 הקופסה של ${esc(n[0])} ${esc(andName(n[1]))}</span>`}
+    if(!hasLic()&&owned())plate.innerHTML="";
+    else if(owned()){const n=P.lic.names||["",""];plate.innerHTML=`<span class="pl own">🎁 הקופסה של ${esc(n[0])} ${esc(andName(n[1]))}</span>`}
     else plate.innerHTML=`<span class="pl">גרסת טעימה · ${FREE_TOTAL} קלפים מתוך ${TOTAL}</span>`;
   }
-  if(home)home.innerHTML=owned()
+  if(home)home.innerHTML=!hasLic()&&owned()?"":owned()
     ?`<button type="button" class="px-link" data-px="box">הקופסה שלנו</button>`
     :`<button type="button" class="px-buy" data-px="paywall">לפתוח את הקופסה המלאה · ${CFG.price} ₪</button><button type="button" class="px-link" data-px="paywall">יש לי קוד פתיחה</button>`;
   if(ex){
@@ -463,10 +465,10 @@ function refreshHome(){
       <button type="button" class="px-tile" data-px="custom"><span>✍️</span><b>קלפים אישיים</b><small>${owned()?P.custom.length+" בחפיסה":"בקופסה המלאה"}</small>${lock}</button>
       <button type="button" class="px-tile" data-px="drawer"><span>🎟️</span><b>מגירת השוברים</b><small>${owned()?P.coupons.filter(c=>!c.used).length+" ממתינים":"בקופסה המלאה"}</small>${lock}</button>
       <button type="button" class="px-tile${P.settings.table?" on":""}" data-px="table" aria-pressed="${P.settings.table?"true":"false"}"><span>🪑</span><b>מצב שולחן</b><small>${P.settings.table?"פעיל: הקלף מסתובב לשחקן 2":"כבוי: יושבים זה לצד זה"}</small></button>
-      <button type="button" class="px-tile" data-px="${owned()?"box":"paywall"}"><span>🎁</span><b>${owned()?"הקופסה שלנו":"הקופסה המלאה"}</b><small>${owned()?"הדפסה, התקנה ומתנה":CFG.price+" ₪, פעם אחת"}</small></button>`;
+      ${!hasLic()&&owned()?`<button type="button" class="px-tile" data-px="print"><span>🖨️</span><b>להדפסה</b><small>שוברים וערכת שולחן</small></button>`:`<button type="button" class="px-tile" data-px="${owned()?"box":"paywall"}"><span>🎁</span><b>${owned()?"הקופסה שלנו":"הקופסה המלאה"}</b><small>${owned()?"הדפסה, התקנה ומתנה":CFG.price+" ₪, פעם אחת"}</small></button>`}`;
   }
   setHeat(owned()?Math.max(1,Math.min(3,+P.settings.level||1)):1);
-  if(owned()&&P.lic.names){["n1","n2"].forEach((id,k)=>{const el=$(id);if(el&&!el.value&&P.lic.names[k])el.value=P.lic.names[k]})}
+  if(hasLic()&&P.lic.names){["n1","n2"].forEach((id,k)=>{const el=$(id);if(el&&!el.value&&P.lic.names[k])el.value=P.lic.names[k]})}
 }
 const heatGroup=document.querySelector('[data-for="heatLevel"]');
 if(heatGroup)heatGroup.addEventListener("click",e=>{const b=e.target.closest("button[data-v]");if(b&&+b.dataset.v>1&&!owned()){e.stopImmediatePropagation();e.preventDefault();showPaywall()}},true);
@@ -566,7 +568,7 @@ document.addEventListener("click",e=>{
 applyDecks();
 refreshHome();
 gift=readGift();
-if(gift){try{introFinish()}catch(_e){}showGift()}
+if(gift&&!CFG.unlocked){try{introFinish()}catch(_e){}showGift()}
 if("serviceWorker" in navigator&&/^https?:$/.test(location.protocol)){window.addEventListener("load",()=>{navigator.serviceWorker.register("sw.js").catch(()=>{})})}
 window.LBPX={P,applyDecks,refreshHome,showPaywall,showUnbox};
 })();
