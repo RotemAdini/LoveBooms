@@ -87,7 +87,9 @@ function applyDecks(){
   LV.clear();
   CATS.forEach(cat=>{
     const src=LB_DECK[cat];
-    const list=owned()?src.filter(c=>c[0]<=lv):src.filter(c=>c[0]===1).slice(0,LB_FREE_N[cat]);
+    /* חמים = רמה 1 · לוהט = 1+2 · מתפוצץ = 2+3. שתייה: כל מה שעד הרמה */
+    const inLv=c=>cat==="drink"?c[0]<=lv:(c[0]<=lv&&c[0]>=(lv===3?2:1));
+    const list=owned()?src.filter(inLv):src.filter(c=>c[0]===1).slice(0,LB_FREE_N[cat]);
     const out=list.map(c=>{LV.set(c[1],c[0]);return cat==="tempt"?{c:c[1]}:c[1]});
     if(owned())P.custom.filter(x=>x.cat===cat).forEach(x=>{const t="{actor}, "+x.t;LV.set(t,0);out.push(t)});
     DB[cat].length=0;DB[cat].push(...out);
@@ -196,6 +198,8 @@ function blast(n,dist){
 }
 function bombDrama(i){
   if(rm())return Promise.resolve();
+  /* הפיצוץ הראשון בערב מלא; אחריו גרסה קצרה, כדי שלא יימאס */
+  const quick=S.stats.bombs>0,beeps=quick?[160,300,410]:[380,760,1060,1290,1460,1580,1660],boomAt=quick?520:1760;
   return new Promise(res=>{
     const t=$("t"+i),r=t?t.getBoundingClientRect():{left:innerWidth/2,top:innerHeight/2,width:0,height:0};
     const st=document.createElement("div");st.className="bomb-stage";
@@ -204,7 +208,7 @@ function bombDrama(i){
     const b=st.querySelector(".bs-bomb"),dx=r.left+r.width/2-innerWidth/2,dy=r.top+r.height/2-innerHeight/2;
     if(b.animate)b.animate([{transform:`translate(${dx}px,${dy}px) scale(.18)`},{transform:"translate(0,0) scale(1)"}],{duration:420,easing:"cubic-bezier(.34,1.56,.64,1)",fill:"both"});
     SFX.fuseStart();SFX.fuseLevel(.45);
-    [380,760,1060,1290,1460,1580,1660].forEach((ms,k)=>setTimeout(()=>{SFX.beep(700+k*130);vib(25);SFX.fuseLevel(.5+k*.08);st.classList.remove("pulse");void st.offsetWidth;st.classList.add("pulse")},ms));
+    beeps.forEach((ms,k)=>setTimeout(()=>{SFX.beep(700+k*130);vib(25);SFX.fuseLevel(.5+k*.08);st.classList.remove("pulse");void st.offsetWidth;st.classList.add("pulse")},ms));
     setTimeout(()=>{
       SFX.fuseStop();b.remove();st.classList.add("boom");
       st.insertAdjacentHTML("beforeend",`<div class="bs-flash"></div><div class="bs-ring"></div><div class="bs-ring r2"></div><div class="bs-ring r3"></div><div class="bs-txt">בום!</div>`);
@@ -213,7 +217,7 @@ function bombDrama(i){
       setTimeout(()=>vib([160,50,240,50,340]),0);
       setTimeout(()=>st.remove(),1600);
       res();
-    },1760);
+    },boomAt);
   });
 }
 const _bombHitPx=bombHit;
@@ -491,6 +495,7 @@ function showBox(){
       <button type="button" class="px-tile" data-px="drawer"><span>🎟️</span><b>מגירת השוברים</b><small>${P.coupons.filter(c=>!c.used).length} ממתינים</small></button>
       <button type="button" class="px-tile" data-px="print"><span>🖨️</span><b>להדפסה</b><small>שוברים וערכת שולחן</small></button>
       <button type="button" class="px-tile" data-px="install"><span>📲</span><b>התקנה</b><small>אייקון במסך הבית</small></button>
+      <button type="button" class="px-tile" data-px="backup"><span>💾</span><b>גיבוי</b><small>שמירה והעברה לטלפון אחר</small></button>
       ${L?`<button type="button" class="px-tile" data-px="gift"><span>💝</span><b>לתת במתנה</b><small>קישור עם הקדשה</small></button>
       <button type="button" class="px-tile" data-px="unboxAgain"><span>📦</span><b>לפתוח שוב</b><small>את רגע פתיחת הקופסה</small></button>`:""}
     </div>
@@ -532,7 +537,7 @@ function refreshHome(){
       <button type="button" class="px-tile" data-px="custom"><span>✍️</span><b>קלפים אישיים</b><small>${owned()?P.custom.length+" בחפיסה":"בקופסה המלאה"}</small>${lock}</button>
       <button type="button" class="px-tile" data-px="drawer"><span>🎟️</span><b>מגירת השוברים</b><small>${owned()?P.coupons.filter(c=>!c.used).length+" ממתינים":"בקופסה המלאה"}</small>${lock}</button>
       <button type="button" class="px-tile${P.settings.table?" on":""}" data-px="table" aria-pressed="${P.settings.table?"true":"false"}"><span>🪑</span><b>מצב שולחן</b><small>${P.settings.table?"פעיל: הקלף מסתובב לשחקן 2":"כבוי: יושבים זה לצד זה"}</small></button>
-      ${!hasLic()&&owned()?`<button type="button" class="px-tile" data-px="print"><span>🖨️</span><b>להדפסה</b><small>שוברים וערכת שולחן</small></button>`:`<button type="button" class="px-tile" data-px="${owned()?"box":"paywall"}"><span>🎁</span><b>${owned()?"הקופסה שלנו":"הקופסה המלאה"}</b><small>${owned()?"הדפסה, התקנה ומתנה":CFG.price+" ₪, פעם אחת"}</small></button>`}`;
+      ${!hasLic()&&owned()?`<button type="button" class="px-tile" data-px="box"><span>🎁</span><b>הקופסה שלנו</b><small>הדפסה, התקנה וגיבוי</small></button>`:`<button type="button" class="px-tile" data-px="${owned()?"box":"paywall"}"><span>🎁</span><b>${owned()?"הקופסה שלנו":"הקופסה המלאה"}</b><small>${owned()?"הדפסה, התקנה ומתנה":CFG.price+" ₪, פעם אחת"}</small></button>`}`;
   }
   setHeat(owned()?Math.max(1,Math.min(3,+P.settings.level||1)):1);
   if(hasLic()&&P.lic.names){["n1","n2"].forEach((id,k)=>{const el=$(id);if(el&&!el.value&&P.lic.names[k])el.value=P.lic.names[k]})}
@@ -630,6 +635,229 @@ document.addEventListener("click",e=>{
   e.preventDefault();Audio.ensure();
   Promise.resolve(fn(b,e)).catch(err=>{console.error(err);note("משהו השתבש. נסו שוב.",true)});
 });
+
+/* =====================================================================
+   שדרוג משחקיות: רמזי פצצות, מכתשים, רוח גבית, דו־קרב עם בחירה,
+   מחיר לוויתור, פחות מסכי הסבר, בלי חזרות בין משחקים, מוזיקה, גיבוי
+   ===================================================================== */
+const gv=(i,m,f)=>((S.players[i]||{}).gender==="m"?m:f);
+
+/* ---------- רמזים: כמה פצצות צמודות למשבצת פתוחה ---------- */
+const NB=[[-1,0],[1,0],[0,-1],[0,1]];
+function bombsAround(r,c){let n=0;NB.forEach(([dr,dc])=>{const x=S.board[r+dr]&&S.board[r+dr][c+dc];if(x&&x.type==="bomb")n++});return n}
+const _paintU=paint;
+paint=function(c){
+  _paintU(c);
+  if(!c||!c.el||!S.board.length)return;
+  const isS=c.r===START[0]&&c.c===START[1],isG=c.r===GOAL[0]&&c.c===GOAL[1];
+  if(c.crater&&c.reveal){c.el.classList.add("crater");const ic=c.el.querySelector(".icon");if(ic)ic.textContent="🕳️"}
+  if((c.reveal||isS)&&!isG){
+    const n=bombsAround(c.r,c.c),b=document.createElement("span");
+    b.className="hint h"+n;b.textContent=n;c.el.appendChild(b);
+  }
+};
+function repaintAll(){if(!S.board.length)return;for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++)if(S.board[r]&&S.board[r][c])paint(S.board[r][c])}
+boardSnapshot=function(){return S.board.map(row=>row.map(c=>({type:c.type,reveal:!!c.reveal,crater:!!c.crater})))};
+const _bbfs=buildBoardFromSnapshot;
+buildBoardFromSnapshot=function(snap){
+  const ok=_bbfs(snap);
+  if(ok){snap.forEach((row,r)=>row.forEach((x,c)=>{if(x&&x.crater&&S.board[r]&&S.board[r][c])S.board[r][c].crater=true}));repaintAll()}
+  return ok;
+};
+const _buildBoardU=buildBoard;
+buildBoard=function(){_buildBoardU();repaintAll()};
+
+/* ---------- פצצה מתפוצצת פעם אחת והופכת למכתש ---------- */
+let revealing=null;
+const _trfU=tileRevealFlow;
+tileRevealFlow=async function(cell,actor=S.cur){revealing=cell;return _trfU(cell,actor)};
+const _bombHitU=bombHit;
+bombHit=async function(){
+  const cell=revealing;
+  const out=await _bombHitU.apply(this,arguments);
+  if(cell&&cell.type==="bomb"){cell.type="empty";cell.crater=true;cell.reveal=true;repaintAll();saveGame()}
+  return out;
+};
+
+/* ---------- רוח גבית: מי שמאחור ב-5 צעדים ומעלה מקבל/ת צעד נוסף ---------- */
+const _nextTurnU=nextTurn;
+nextTurn=function(){
+  if(!S.over&&S.players.length===2&&S.pxBoost!==S.turn){
+    const me=S.cur,gap=distToGoal(S.players[me].pos)-distToGoal(S.players[1-me].pos);
+    if(gap>=5){
+      S.pxBoost=S.turn;
+      startManualMove(me,1,"forward",`🔥 רוח גבית: ${S.players[me].name} ${gv(me,"נמצא","נמצאת")} מאחור ב-${gap} צעדים ${gv(me,"ומקבל","ומקבלת")} צעד נוסף`);
+      return;
+    }
+  }
+  return _nextTurnU();
+};
+
+/* ---------- קלפים: בוצע או ויתור (ויתור עולה צעד אחורה) ---------- */
+card=function(i,t,x){
+  const player=actorIndex(),sec=timerSeconds(x);
+  if(sec){
+    S.pending={k:"timed_active",i,t,x,player,sec};S.actor=player;
+    pop(i,t,x,[{t:"✅ הצלחתי",k:"timedDone",kindClass:"good"},{t:"🙅 לא הפעם",k:"timedFail",kindClass:"bad"}],true,{timerSec:sec});
+    return;
+  }
+  pop(i,t,x,[{t:"✅ בוצע",k:"done",kindClass:"good"},{t:gv(player,"🙅 מוותר","🙅 מוותרת"),k:"pxSkip",kindClass:"bad"}],true);
+};
+
+/* ---------- דו־קרב: ישר לקלף, והמנצח/ת בוחר/ת ---------- */
+startDuel=function(){S.stats.duels++;const d=pickNoRepeat("duel"),player=actorIndex();showDuelChallenge({d,player})};
+async function pushBack(w){
+  const o=1-w,step=findBackStep(o);
+  S.busy=true;closeModal();updateMoveButtons();
+  if(step){S.players[o].pos=[step[0],step[1]];await animateToken(o,step[0],step[1]);stackTokens();
+    toast(`⚔️ ${S.players[w].name} ${gv(w,"שלח","שלחה")} את ${S.players[o].name} צעד אחורה`,1500,"danger")}
+  S.busy=false;if(!S.over)nextTurn();else updateMoveButtons();
+}
+const _resolvePendingU=resolvePending;
+resolvePending=async function(k){
+  const x=S.pending;
+  if(x&&x.k==="duel_result"&&/^duelWin[01]$/.test(k)){
+    const w=+k.slice(-1),o=1-w;
+    S.pending={k:"duel_choice",w,player:x.player};Audio.play("good");
+    const acts=[{t:"⬆️ צעד קדימה",k:"pxDuelSelf",kindClass:"good"}];
+    if(findBackStep(o))acts.push({t:`⬇️ ${S.players[o].name} אחורה`,k:"pxDuelPush",kindClass:"bad"});
+    pop("⚔️","דו־קרב",`${S.players[w].name} ${(W[S.players[w].gender]||W.f).win} 🏆\n\nמה עושים עם הניצחון: מתקדמים צעד, או מחזירים את ${S.players[o].name} צעד אחורה?`,acts,false);
+    return true;
+  }
+  if(x&&x.k==="duel_choice"){
+    if(k==="pxDuelSelf"){S.pending=null;startManualMove(x.w,1,"forward",`⚔️ ${S.players[x.w].name} ${(W[S.players[x.w].gender]||W.f).choose} צעד פרס אחד. פצצה בדרך מופעלת כרגיל.`);return true}
+    if(k==="pxDuelPush"){S.pending=null;await pushBack(x.w);return true}
+  }
+  if(x&&x.k==="tempt"&&k==="risk"){
+    const sec=timerSeconds(x.d.c);
+    if(sec){
+      S.pending={k:"tempt_timed_active",d:x.d,player:x.player,sec};S.actor=x.player;
+      pop("❓","אתגר סיכון",`${fmt(x.d.c,x.player)}\n\nהצלחה: +1 צעד\nלא הצלחת? -1 צעד`,[{t:"✅ הצלחתי",k:"succ",kindClass:"good"},{t:"🙅 לא הצלחתי",k:"timedFail",kindClass:"bad"}],false,{timerSec:sec});
+      return true;
+    }
+  }
+  return _resolvePendingU(k);
+};
+
+/* ---------- בלי חזרות גם בין משחקים ---------- */
+if(!P.seen||typeof P.seen!=="object")P.seen={};
+pickNoRepeat=function(cat){
+  const arr=DB[cat],h=S.history[cat]||(S.history[cat]=[]),inGame=new Set(h.map(keyOf));
+  const seen=new Set(P.seen[cat]||[]);
+  let cand=arr.filter(x=>!inGame.has(keyOf(x))&&!seen.has(keyOf(x)));
+  if(!cand.length){P.seen[cat]=[];cand=arr.filter(x=>!inGame.has(keyOf(x)))}
+  if(!cand.length){h.length=0;cand=arr.slice()}
+  const v=cand[Math.floor(Math.random()*cand.length)],key=keyOf(v);
+  h.push(v);(P.seen[cat]=P.seen[cat]||[]).push(key);save();
+  last={cat,key};renderDecks();return v;
+};
+
+/* ---------- טון: אימוג'י, תארים ושמות ---------- */
+EM.splice(0,EM.length,"😈","😎","🥵","😘","😏","🫦","😍","🔥","💋","🍷","🌙","🖤","💎","👑","🌹","🥂");
+if(!EM.includes(S.e1))S.e1=EM[0];
+if(!EM.includes(S.e2))S.e2=EM[1];
+["e1","e2"].forEach((id,k)=>{const g=$(id);if(!g)return;g.innerHTML="";mkEmoji(id,k+1);const sel=g.querySelector(".sel")||g.firstElementChild;if(sel)sel.click()});
+microTitle=function(){
+  const s=S.stats;
+  if((s.skips||0)>=3)return "ערב של ויתורים";
+  if(s.bombs>=5)return "שדה מוקשים זוגי";
+  if(s.duels>=4)return "יריבות מסוכנת";
+  if((s.drinks||0)>=4)return "ערב רטוב";
+  return "ערב שנגמר בנשיקה";
+};
+const INTRO_TXT="🏆 מי שמגיע ראשון לגביע מנצח\n🔢 מספר על משבצת פתוחה = כמה פצצות צמודות אליה\n💣 פצצה מחזירה להתחלה והופכת למכתש 🕳️\n⚔️ ניצחון בדו־קרב: מתקדמים, או מחזירים את היריב\n🙅 ויתור על קלף עולה צעד אחורה\n🔥 מי שמאחור ב-5 צעדים מקבל רוח גבית\n\nכל קלף הוא הזמנה, לא חובה. מוותרים בלי הסברים, ורק משלמים צעד.";
+showHowToPlay=function(){pop("ℹ️","איך משחקים",INTRO_TXT,[{t:"חזרה למשחק",k:"resume"}],false)};
+
+/* ---------- מוזיקת רקע ---------- */
+const MUSIC=(()=>{
+  let on=false,timer=null,bus=null,step=0;
+  const CH=[[220,261.63,329.63],[174.61,220,261.63],[261.63,329.63,392],[196,246.94,293.66]];
+  function chord(a,fs,T){fs.forEach((f,k)=>{const o=a.createOscillator(),g=a.createGain(),fl=a.createBiquadFilter();o.type=k?"sine":"triangle";o.frequency.value=k?f:f/2;fl.type="lowpass";fl.frequency.value=900;g.gain.setValueAtTime(.0001,T);g.gain.exponentialRampToValueAtTime(.045/(k+1),T+1.3);g.gain.exponentialRampToValueAtTime(.0001,T+4.7);o.connect(fl);fl.connect(g);g.connect(bus);o.start(T);o.stop(T+4.9)})}
+  function tick(){const a=Audio.ensure();if(!a||!bus)return;try{chord(a,CH[step%4],a.currentTime+.05)}catch(_e){}step++}
+  return{
+    start(){if(on||P.settings.music===false||Audio.muted)return;const a=Audio.ensure();if(!a)return;bus=a.createGain();bus.gain.value=.55;bus.connect(a.destination);on=true;tick();timer=setInterval(tick,4000)},
+    stop(){on=false;clearInterval(timer);timer=null;if(bus){const b=bus;bus=null;try{b.gain.setTargetAtTime(.0001,b.context.currentTime,.25)}catch(_e){}}}
+  };
+})();
+document.addEventListener("visibilitychange",()=>{if(document.hidden)MUSIC.stop();else if($("game").classList.contains("show"))MUSIC.start()});
+
+/* ---------- התחלת משחק: חובה שמות, הסבר חדש, מוזיקה ---------- */
+const _startGameU=startGame;
+startGame=function(){
+  if($("game").classList.contains("show"))return;
+  const a=$("n1").value.trim(),b=$("n2").value.trim();
+  if(!a||!b){toast("כתבו את שני השמות לפני שמתחילים",1600);(a?$("n2"):$("n1")).focus();return}
+  _startGameU();
+  if(S.players.length===2){S.stats.skips=0;pop("💘","מתחילים",INTRO_TXT,[{t:"יאללה",k:"resume"}],false)}
+  MUSIC.start();
+};
+$("startBtn").onclick=startGame;
+const _restoreU=restoreSavedGame;
+restoreSavedGame=function(){const ok=_restoreU.apply(this,arguments);if(ok){repaintAll();MUSIC.start()}return ok};
+
+/* ---------- הגדרות ופעולות ---------- */
+const _openSettingsU=openSettings;
+openSettings=function(){
+  _openSettingsU();
+  if(!modal.classList.contains("show")||$("mcard").dataset.theme!=="settings")return;
+  const ma=$("ma"),mk=(t,k)=>{const b=document.createElement("button");b.type="button";b.className="mb";b.dataset.k=k;b.textContent=t;b.onclick=()=>act(k,S.modalVersion);return b};
+  const ref=ma.querySelector('[data-k="pxBox"]');
+  ma.insertBefore(mk(P.settings.music===false?"🎵 מוזיקה: כבויה":"🎵 מוזיקה: פעילה","pxMusic"),ref);
+  ma.insertBefore(mk("💾 גיבוי והעברה","pxBackup"),ref);
+  S.modalState.actions=[...ma.querySelectorAll("button")].map(b=>({t:b.textContent,k:b.dataset.k,kindClass:""}));
+};
+$("settingsBtn").onclick=openSettings;
+const _amaU=applyModalAction;
+applyModalAction=async function(k,v){
+  if(v!==S.modalVersion)return;
+  if(k==="pxSkip"){
+    const p=actorIndex();S.pending=null;S.stats.skips=(S.stats.skips||0)+1;Audio.play("bad");
+    await penaltyBackOne(p,`🙅 ${S.players[p].name} ${gv(p,"ויתר","ויתרה")} על הקלף: צעד אחד אחורה`);
+    return;
+  }
+  if(k==="pxMusic"){P.settings.music=P.settings.music===false;save();if(P.settings.music)MUSIC.start();else MUSIC.stop();openSettings();return}
+  if(k==="pxBackup"){closeModal();S.busy=false;updateMoveButtons();showBackup();return}
+  if(k==="pxMute"){const r=await _amaU(k,v);if(Audio.muted)MUSIC.stop();else MUSIC.start();return r}
+  return _amaU(k,v);
+};
+
+/* ---------- גיבוי והעברה למכשיר אחר ---------- */
+function backupData(){
+  const g=k=>{try{return localStorage.getItem(k)}catch(_e){return null}};
+  return {app:"lovebooms-box",v:1,ts:Date.now(),box:P,wins:g(WIN_KEY),history:g(HISTORY_KEY),review:g("pxCardReview")};
+}
+function showBackup(){
+  sheet(`<div class="px-hero">💾</div><h2>גיבוי והעברה</h2>
+    <p class="px-sub">הכול נשמר רק בדפדפן הזה. כדי לא לאבד שוברים, קלפים אישיים וניצחונות, או כדי לעבור לטלפון אחר, שומרים קובץ גיבוי וטוענים אותו במכשיר השני.</p>
+    <button type="button" class="px-btn wide" data-px="bkSave">📤 לשמור קובץ גיבוי</button>
+    <label class="px-btn wide px-file">📥 לטעון גיבוי<input type="file" id="pxBk" accept="application/json,.json" hidden></label>
+    <p class="px-msg" role="status"></p>
+    <p class="px-fine">טעינת גיבוי מחליפה את מה שיש כרגע במכשיר הזה.</p>`);
+  const inp=$("pxBk");if(inp)inp.addEventListener("change",()=>{const f=inp.files&&inp.files[0];if(f)ACT.bkLoad(f)});
+}
+ACT.backup=showBackup;
+ACT.bkSave=()=>{
+  try{
+    const blob=new Blob([JSON.stringify(backupData(),null,1)],{type:"application/json"}),url=URL.createObjectURL(blob),a=document.createElement("a");
+    a.href=url;a.download="lovebooms-backup-"+new Date().toISOString().slice(0,10)+".json";document.body.appendChild(a);a.click();a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url),4000);note("קובץ הגיבוי נשמר");
+  }catch(_e){note("לא הצלחנו לשמור את הקובץ",true)}
+};
+ACT.bkLoad=f=>{
+  const rd=new FileReader();
+  rd.onload=()=>{
+    try{
+      const d=JSON.parse(rd.result);
+      if(!d||d.app!=="lovebooms-box"||!d.box||typeof d.box!=="object")throw 0;
+      localStorage.setItem(STORE,JSON.stringify(d.box));
+      if(d.wins)localStorage.setItem(WIN_KEY,d.wins);
+      if(d.history)localStorage.setItem(HISTORY_KEY,d.history);
+      if(d.review)localStorage.setItem("pxCardReview",d.review);
+      note("הגיבוי נטען. טוענים מחדש…");setTimeout(()=>location.reload(),700);
+    }catch(_e){note("זה לא קובץ גיבוי של פצצות אהבה",true)}
+  };
+  rd.readAsText(f);
+};
 
 /* ---------- אתחול ---------- */
 applyDecks();
